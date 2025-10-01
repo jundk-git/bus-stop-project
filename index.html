@@ -105,7 +105,8 @@
             color: #000; 
             font-weight: normal; 
         }
-        /* 진행사항 파란색 */ .action-text {
+        /* 진행사항 파란색 */
+        .action-text {
             color: #007bff; 
             font-weight: bold;
         }
@@ -114,8 +115,6 @@
         color: #0056b3; /* 진한 파랑 */ 
         font-weight: bold; 
         }
-        /* 🚨 수정 반영: 거리 정렬 클래스 제거 (기본 좌측 정렬 유지) */
-        /* .distance-center-align { text-align: center !important; } */
         /* 모달 스타일 */
         .modal {
             display: none; 
@@ -232,8 +231,8 @@
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://insight-seal-air-record.trycloudflare.com'; 
-                             //    https://cult-pdt-animals-conjunction.trycloudflare.com 
+    const API_BASE_URL = 'https://argument-drew-conferences-invention.trycloudflare.com'; 
+
     let currentStandardId = '02-223'; 
     let activeStopId = null;         
 
@@ -302,8 +301,8 @@
                         <thead>
                             <tr>
                                 <th style="width: 15%;">정류장번호</th>
-                                <th style="width: 15%;">발생시간</th>  
-                                <th style="width: 15%;">거리</th> <th style="width: 35%;">정류소명</th>
+                                <th style="width: 15%;">발생시간</th>  <th style="width: 15%;">거리(km)</th>
+                                <th style="width: 35%;">정류소명</th>
                                 <th style="width: 20%;">진행사항</th> </tr>
                         </thead>
                         <tbody>
@@ -313,10 +312,9 @@
                     listHtml += `<tr><td colspan="5" style="text-align: center; color: #6c757d;">현재 활성 장애 목록이 없습니다.</td></tr>`;
                 } else {
                     data.incidents.forEach(item => {
-                        // 🚨 수정 반영: '조치사항 없음' -> '진행사항 입력 필요'
-                        const actionDisplay = item.action ? `<span class="action-text">${item.action}</span>` : '<span class="status-pending">진행사항 입력 필요</span>'; 
-                        
-                        const distanceValue = item.distance_display || 'N/A';
+                        // 🚨 수정: 조치사항 없음 -> 진행사항 입력 필요
+                        const actionDisplay = item.action ? `<span class="action-text">${item.action}</span>` : '<span class="status-pending">진행사항 입력 필요</span>';
+                        const distanceValue = item.distance_display ? item.distance_display.replace('km', '').trim() : 'N/A';
 
                         listHtml += `
                             <tr class="" 
@@ -325,8 +323,7 @@
                                 data-id="${item.id}">
                                 
                                 <td><span class="incident-text">${item.id}</span></td> 
-                                <td><span class="incident-text">${item.time}</span></td>
-                                <td><span class="incident-text">${distanceValue}</span></td> 
+                                <td><span class="incident-text">${item.time}</span></td>  <td><span class="incident-text">${distanceValue}</span></td> 
                                 <td><span class="incident-text">${item.정류소명}</span></td>
                                 <td>${actionDisplay}</td> </tr>
                         `;
@@ -419,6 +416,7 @@
                 if (activeData) {
                     document.getElementById('detailCurrentStatus').innerHTML = `<span class="status-failure">${activeData.status}</span>`;
                     document.getElementById('detailTime').textContent = activeData.time;
+                    // activeData.action이 null일 경우 빈 문자열('')을 할당합니다.
                     document.getElementById('actionText').value = activeData.action || '';
                     
                     btnUpdate.style.display = 'block';
@@ -454,14 +452,14 @@
             });
     }
 
-    // 조치사항 저장/삭제/신규 (POST)
+    // 진행사항 저장/삭제/신규 (POST)
     async function updateAction(actionType) {
         const actionText = document.getElementById('actionText').value;
         const actionMessage = document.getElementById('actionMessage');
         actionMessage.style.display = 'none';
         
         if (!actionText) {
-            // 🚨 수정 반영: 조치사항 -> 진행사항
+            // 🚨 수정: 조치사항 -> 진행사항
             actionMessage.innerHTML = `<span class="error">❌ 오류:</span> ${actionType === 'DELETE' ? '삭제' : actionType === 'CREATE' ? '신규 등록' : '수정'} 시 진행사항을 반드시 입력해야 합니다.`;
             actionMessage.style.display = 'block';
             return;
@@ -517,7 +515,7 @@
         manualMessage.style.display = 'none';
 
         if (!manualStopId || !manualActionText) {
-            // 🚨 수정 반영: 조치사항 -> 진행사항
+            // 🚨 수정: 조치사항 -> 진행사항
             manualMessage.innerHTML = `<span class="error">❌ 오류:</span> 정류장 ID와 진행사항을 모두 입력해야 합니다.`;
             manualMessage.style.display = 'block';
             return;
