@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚌 실시간 버스정류장 장애 관리 시스템 (Seoul Bus Incident Management)</title>
+    <title>🚌 서울 버스 정류장 장애 현황</title>
     <style>
         /* 기본 스타일 및 컨테이너 */
         body { 
@@ -24,125 +24,105 @@
         h2 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 1rem; }
         
         input, textarea { 
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box; /* 패딩이 width에 포함되도록 설정 */
-            font-size: 0.9rem;
+            width: 100%; 
+            padding: 10px; 
+            margin-bottom: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+            box-sizing: border-box;
+            font-size: 1em;
         }
         button {
             padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 1rem;
             transition: background-color 0.2s;
-            margin-right: 5px;
+            font-size: 1em;
         }
-        .btn-primary { background-color: #007bff; color: white; }
-        .btn-primary:hover { background-color: #0056b3; }
-        .btn-success { background-color: #28a745; color: white; }
-        .btn-success:hover { background-color: #1e7e34; }
-        .btn-danger { background-color: #dc3545; color: white; }
-        .btn-danger:hover { background-color: #bd2130; }
-        .btn-info { background-color: #17a2b8; color: white; }
-        .btn-info:hover { background-color: #117a8b; }
-
-        /* 기준 정류소 섹션 */
-        .standard-stop {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        /* 알림 메시지 */
+        .status-message {
             padding: 15px;
-            border-radius: 8px;
             margin-bottom: 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: none; /* 기본 숨김 */
         }
-        .standard-stop h3 {
-            margin-top: 0;
-            color: #007bff;
-            font-size: 1.2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .status-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
         }
-        .standard-stop-info {
-            font-size: 1rem;
-            color: #555;
-        }
-        .input-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .input-group input {
-            flex-grow: 1;
-            margin-bottom: 0;
+        .status-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
         }
 
-        /* 목록 테이블 */
-        .incident-list-section table {
+        /* 테이블 스타일 */
+        table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
-            margin-top: 15px;
-            font-size: 0.9rem;
+            margin-top: 20px;
         }
-        .incident-list-section th, .incident-list-section td {
+        th, td {
             padding: 12px;
-            border-bottom: 1px solid #dee2e6;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
         }
-        .incident-list-section th {
-            background-color: #f1f3f5;
-            color: #495057;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        .incident-list-section td {
-            vertical-align: middle;
-        }
-        .incident-list-section tr:hover {
+        th {
             background-color: #f8f9fa;
+            color: #333;
+            font-weight: 600;
         }
-        .incident-list-section td a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .incident-list-section td a:hover {
-            text-decoration: underline;
-        }
-        .stop-name {
-            min-width: 150px;
+        tbody tr:hover {
+            background-color: #f1f1f1;
         }
 
-        /* 상태 표시 */
-        .status-success { color: #28a745; font-weight: bold; }
-        .status-failure { color: #dc3545; font-weight: bold; }
-        .status-in-progress { color: #ffc107; font-weight: bold; }
-        .status-pending { color: #6c757d; font-weight: bold; }
+        /* 배지 스타일 */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            color: white;
+            text-align: center;
+        }
+        .badge-type { background-color: #6c757d; } /* 정류소 타입 */
+        .badge-action { background-color: #17a2b8; } /* 진행사항 */
+        .badge-standard { 
+            background-color: #ffc107; 
+            color: #343a40;
+            margin-left: 5px;
+        } /* 기준 정류장 */
 
         /* 모달 스타일 */
         .modal {
             display: none; 
             position: fixed; 
-            z-index: 1000; 
+            z-index: 10; 
             left: 0;
             top: 0;
             width: 100%; 
             height: 100%; 
             overflow: auto; 
             background-color: rgba(0,0,0,0.4); 
+            padding-top: 60px;
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 10% auto; 
-            padding: 25px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 600px;
+            margin: 5% auto; 
+            padding: 30px;
             border-radius: 10px;
+            width: 80%; 
+            max-width: 500px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             position: relative;
         }
@@ -158,33 +138,10 @@
             text-decoration: none;
             cursor: pointer;
         }
-        .modal-message {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            background-color: #fff3cd;
-            color: #856404;
-            display: none;
-        }
-        .modal-title {
-            color: #007bff;
-            border-bottom: 1px solid #dee2e6;
+        .modal-content h3 {
+            border-bottom: 1px solid #eee;
             padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .history-list {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        .history-list p {
-            margin: 5px 0;
-            padding-bottom: 5px;
-            border-bottom: 1px dotted #e9ecef;
-            font-size: 0.85rem;
+            margin-bottom: 20px;
         }
 
         /* 🌟 정렬 기능 관련 스타일 추가 */
@@ -205,115 +162,125 @@
         .sorted-asc, .sorted-desc {
             background-color: #d1e7ff;
         }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        <h1>🚌 버스정류장 장애 현황판</h1>
-        <p style="text-align: center; color: #6c757d;">(기준 정류장으로부터의 거리 및 실시간 조치 현황)</p>
+<div class="main-container">
+    <h1>🚌 서울 버스 정류장 장애 현황판</h1>
+    <p><strong>기준 정류장 ID:</strong> <span id="standardIdDisplay">01001</span> (서울역.YTN) 주변 활성 장애 목록</p>
+    <p>
+        <button onclick="openModal('standardModal')">기준 정류장 변경</button>
+        <button onclick="openModal('manualModal')" style="background-color: #28a745;">수동 장애 등록</button>
+        <button onclick="reloadMainList()" style="background-color: #dc3545;">목록 새로고침</button>
+    </p>
 
-        <div class="standard-stop">
-            <h3 id="standardTitle">기준 정류소 정보</h3>
-            <div class="input-group">
-                <input type="text" id="standardIdInput" value="02-223" placeholder="기준 정류장 ARS_ID 입력 (예: 02-223)">
-                <button class="btn-primary" onclick="reloadMainList()">조회 / 갱신</button>
-            </div>
-            <div id="standardInfoDiv" class="standard-stop-info">
-                </div>
-        </div>
+    <div id="statusMessage" class="status-message"></div>
+
+    <h2><span id="incidentCount"></span> 활성 장애 목록</h2>
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="sortIncidentList('id')" class="sortable">정류장 번호 <span id="sort-id" class="sort-icon"></span></th>
+                    <th onclick="sortIncidentList('time')" class="sortable">발생시간 <span id="sort-time" class="sort-icon"></span></th>
+                    <th onclick="sortIncidentList('distance')" class="sortable sorted-asc">거리 <span id="sort-distance" class="sort-icon">▲</span></th>
+                    <th onclick="sortIncidentList('정류소명')" class="sortable">정류소명 <span id="sort-정류소명" class="sort-icon"></span></th>
+                    <th onclick="sortIncidentList('action')" class="sortable">진행사항 <span id="sort-action" class="sort-icon"></span></th>
+                </tr>
+            </thead>
+            <tbody id="incidentList">
+                <tr><td colspan="5" style="text-align: center;">데이터를 불러오는 중...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="standardModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('standardModal')">&times;</span>
+        <h3>기준 정류장 ID 변경</h3>
+        <p>새로운 기준이 될 정류장의 ARS ID (예: 01001)를 입력하세요.</p>
+        <input type="text" id="newStandardId" placeholder="새로운 ARS ID 입력 (예: 01001)">
+        <p id="standardMessage" class="status-message"></p>
+        <button onclick="changeStandardId()">변경 및 새로고침</button>
+    </div>
+</div>
+
+<div id="manualModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('manualModal')">&times;</span>
+        <h3>수동 장애 등록</h3>
+        <p>장애가 발생한 정류장의 ARS ID 또는 정류소명을 입력하고 조치 내용을 기록합니다.</p>
+        <input type="text" id="manualStopId" placeholder="ARS ID 또는 정류소명 입력">
+        <textarea id="manualActionText" placeholder="조치 내용 (예: 현장 확인, 긴급 출동 요청)"></textarea>
+        <p id="manualMessage" class="status-message"></p>
+        <button onclick="createManualIncident()">장애 등록</button>
+    </div>
+</div>
+
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('detailModal')">&times;</span>
+        <h3 id="detailTitle">장애 상세 정보</h3>
+        <p><strong>정류장 번호:</strong> <span id="detailId"></span></p>
+        <p><strong>정류소명:</strong> <span id="detailName"></span></p>
+        <p><strong>발생 시간:</strong> <span id="detailStartTime"></span></p>
+        <p><strong>현재 진행 상황:</strong> <span id="detailAction"></span></p>
+        <input type="hidden" id="currentDetailId">
         
-        <div style="margin-bottom: 20px;">
-            <button class="btn-success" onclick="openModal('sampleModal')">일괄 등록</button>
-            <button class="btn-info" onclick="openModal('manualModal')">수동 등록</button>
-        </div>
-
-        <div class="incident-list-section">
-            <h2>⚠️ 활성 장애 목록</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th onclick="sortIncidentList('id')" class="sortable">정류장 번호 <span id="sort-id" class="sort-icon"></span></th>
-                        <th onclick="sortIncidentList('time')" class="sortable">발생시간 <span id="sort-time" class="sort-icon"></span></th>
-                        <th onclick="sortIncidentList('distance')" class="sortable sorted-asc">거리 <span id="sort-distance" class="sort-icon">▲</span></th>
-                        <th onclick="sortIncidentList('정류소명')" class="sortable">정류소명 <span id="sort-정류소명" class="sort-icon"></span></th>
-                        <th onclick="sortIncidentList('action')" class="sortable">진행사항 <span id="sort-action" class="sort-icon"></span></th>
-                    </tr>
-                </thead>
-                <tbody id="incidentList">
-                    </tbody>
-            </table>
-        </div>
+        <hr>
+        <h4>장애 처리 완료</h4>
+        <p>이 장애가 처리 완료되었습니까? 처리 완료 시 목록에서 삭제됩니다.</p>
+        <p id="deleteMessage" class="status-message"></p>
+        <button onclick="deleteIncident()" style="background-color: #dc3545;">장애 처리 완료 및 목록에서 삭제</button>
     </div>
+</div>
+
+
+<script>
+    // --- 설정 ---
+    // 🚨🚨🚨 중요: 실제 HTTPS 배포 환경에 따라 아래 주소를 반드시 변경하세요! 🚨🚨🚨
+    // 예시: 'https://api.yourdomain.com' 또는 'https://yourdomain.com'
+    // 로컬 환경에서 테스트할 경우에만 'http://127.0.0.1:5000'을 사용합니다.
+    const API_BASE_URL = 'https://demands-detail-temperatures-lightbox.trycloudflare.com'; 
     
-    <div id="detailModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('detailModal')">&times;</span>
-            <h3 class="modal-title">상세 장애 정보: <span id="modalStopName"></span></h3>
-            
-            <div id="modalMessage" class="modal-message"></div>
-
-            <p><strong>ARS ID:</strong> <span id="modalStopId"></span></p>
-            <p><strong>발생 시각:</strong> <span id="modalStartTime"></span></p>
-            <p><strong>거리 / 위치:</strong> <span id="modalDistance"></span></p>
-            <p><strong>현재 조치 상황:</strong></p>
-            <textarea id="actionText" rows="3" placeholder="현재 진행 중인 조치 내용을 입력하세요."></textarea>
-            
-            <div style="display: flex; justify-content: space-between; margin-top: 15px;">
-                <button class="btn-primary" onclick="updateIncidentAction()">진행 상황 업데이트</button>
-                <button class="btn-danger" onclick="deleteIncident()">조치 완료 & 목록 제거</button>
-            </div>
-
-            <h4 style="margin-top: 20px;">처리 이력</h4>
-            <div id="historyList" class="history-list">
-                </div>
-        </div>
-    </div>
-
-    <div id="sampleModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('sampleModal')">&times;</span>
-            <h3 class="modal-title">일괄 장애 등록</h3>
-            <div id="sampleMessage" class="modal-message"></div>
-            <p>아래 형식에 맞추어 장애 정보를 여러 건 입력하세요. (현재 연도 자동 적용)</p>
-            <textarea id="sampleText" rows="6" placeholder="[알뜰] 02-223 10-01 09:30
-[독립] 01-118 10-01 10:45
-[미니] 03-333 10-01 11:20"></textarea>
-            <button class="btn-success" onclick="processSampleText()">일괄 등록 실행</button>
-        </div>
-    </div>
-
-    <div id="manualModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('manualModal')">&times;</span>
-            <h3 class="modal-title">수동 장애 등록 (현재 시각으로 등록)</h3>
-            <div id="manualMessage" class="modal-message"></div>
-            <p><strong>ARS ID:</strong></p>
-            <input type="text" id="manualStopId" placeholder="등록할 정류장 ARS_ID 입력 (예: 02-223)">
-            <p><strong>초기 조치 내용:</strong></p>
-            <textarea id="manualActionText" rows="3" placeholder="초기 장애 내용 및 조치 내용을 입력하세요."></textarea>
-            <button class="btn-success" onclick="createIncident()">신규 장애 등록</button>
-        </div>
-    </div>
-
-
-    <script>
-    // 🚨🚨🚨 Cloudflare Tunnel 주소 🚨🚨🚨
-    // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://acdbentity-hair-mounts-insulation.trycloudflare.com'; 
-
-    let currentStandardId = '02-223';
-    const standardIdInput = document.getElementById('standardIdInput');
-    const standardTitle = document.getElementById('standardTitle');
-    const standardInfoDiv = document.getElementById('standardInfoDiv');
+    // --- DOM 요소 참조 ---
     const incidentList = document.getElementById('incidentList');
-    
-    // 🌟🌟🌟 정렬 기능 관리를 위한 전역 변수 🌟🌟🌟
+    const statusMessage = document.getElementById('statusMessage');
+    const standardIdDisplay = document.getElementById('standardIdDisplay');
+
+    // --- 🌟 정렬 기능 관련 변수 추가 ---
     let incidentData = []; // 서버에서 받은 원본 데이터를 저장할 배열
     let currentSortColumn = 'distance'; // 현재 정렬 기준 컬럼 (초기값은 거리)
     let sortDirection = 'asc'; // 현재 정렬 방향 (asc: 오름차순, desc: 내림차순)
-    // ---------------------------------------------
+
+    // --- 🌟 모달 제어 함수 ---
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+        // 모달 열 때 메시지 초기화
+        const messageElement = document.getElementById(modalId.replace('Modal', 'Message'));
+        if (messageElement) {
+            messageElement.style.display = 'none';
+        }
+    }
     
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    // 모달 외부 클릭 시 닫기
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    }
+
+
     // ------------------------------------------------------------------------------------------------
     // 🌟 정렬 함수
     // ------------------------------------------------------------------------------------------------
@@ -345,7 +312,10 @@
                 else result = 0;
             } else {
                 // 정류소명, 진행사항 (localeCompare을 사용해 한글 정렬 지원)
-                result = aVal.localeCompare(bVal, 'ko');
+                // 'N/A' 등 예외값 처리: localeCompare가 문자열을 잘 처리하므로 별도 숫자 변환은 하지 않음
+                const aStr = String(aVal);
+                const bStr = String(bVal);
+                result = aStr.localeCompare(bStr, 'ko');
             }
 
             // 3. 정렬 방향 적용
@@ -375,132 +345,118 @@
     }
     // ------------------------------------------------------------------------------------------------
 
+    // --- 목록 렌더링 함수 ---
+    function renderIncidentList(incidents) {
+        let html = '';
 
-    // ------------------------------------------------------------------------------------------------
-    // 메인 리스트 로딩 및 렌더링
-    // ------------------------------------------------------------------------------------------------
-    function reloadMainList() {
-        const standardId = standardIdInput.value;
-        const url = API_BASE_URL + `/get_active_incidents?standard_id=${standardId}`;
+        if (incidents.length === 0) {
+            html = '<tr><td colspan="5" style="text-align: center;">현재 활성 장애가 없습니다.</td></tr>';
+        } else {
+            incidents.forEach(incident => {
+                const distanceText = incident.distance !== 'N/A' ? `${incident.distance}m` : 'N/A';
+                const isStandardBadge = incident.is_standard ? '<span class="badge badge-standard">기준</span>' : '';
 
-        standardTitle.innerHTML = '🔄 데이터 로딩 중...';
-        standardInfoDiv.innerHTML = '';
-        incidentList.innerHTML = '';
+                html += `
+                    <tr onclick="showDetailModal('${incident.id}', '${incident.정류소명}', '${incident.start_time_raw}', '${incident.action.replace(/'/g, "\\'")}')" style="cursor: pointer;">
+                        <td>${incident.id} <span class="badge badge-type">${incident.type}</span> ${isStandardBadge}</td>
+                        <td>${incident.time}</td>
+                        <td style="text-align: right;">${distanceText}</td>
+                        <td>${incident.정류소명}</td>
+                        <td><span class="badge badge-action">${incident.action}</span></td>
+                    </tr>
+                `;
+            });
+        }
         
-        fetch(url)
+        incidentList.innerHTML = html;
+        document.getElementById('incidentCount').textContent = `총 ${incidents.length}건`;
+    }
+
+    // --- 목록 새로고침 및 API 호출 함수 ---
+    function reloadMainList() {
+        const standardId = localStorage.getItem('standardId') || '01001'; // 로컬 스토리지 또는 기본값
+        standardIdDisplay.textContent = standardId;
+        statusMessage.style.display = 'none';
+
+        incidentList.innerHTML = '<tr><td colspan="5" style="text-align: center;">데이터를 불러오는 중...</td></tr>';
+        
+        fetch(API_BASE_URL + `/get_active_incidents?standard_id=${standardId}`)
             .then(response => {
-                // 1. 응답이 정상(200)이 아닐 경우 상세 에러 메시지를 읽어오기 위해 JSON으로 파싱을 시도합니다.
                 if (!response.ok) {
-                    return response.json().then(errorData => {
-                        // 서버 오류(500) 발생 시 JSON 응답에서 상세 내용을 가져와서 출력합니다.
-                        const errorMsg = errorData.error + (errorData.details ? `: ${errorData.details}` : '');
-                        throw new Error(errorMsg);
-                    }).catch(e => {
-                        // JSON 파싱 실패(예: Cloudflare 에러 페이지) 시 일반 HTTP 에러 발생
-                        throw new Error(`HTTP ${response.status} (${response.statusText || '서버 응답 없음'})`);
-                    });
+                    // API_BASE_URL이 잘못되었을 경우, 상태 메시지 표시
+                    if (API_BASE_URL.startsWith('http://127.0.0.1') || API_BASE_URL.includes('[사용자님의_실제_배포_도메인_주소]')) {
+                        throw new Error(`주소 오류: API_BASE_URL이 'http://127.0.0.1:5000' 이거나, [사용자님의_실제_배포_도메인_주소]로 남아있을 수 있습니다. HTTPS 주소를 확인해주세요.`);
+                    }
+                    throw new Error(`HTTP ${response.status} (${response.statusText})`);
                 }
                 return response.json();
             })
             .then(data => {
-                if (data.error) {
-                    throw new Error(`서버 응답 오류: ${data.error}`);
-                }
-
-                renderStandardInfo(data.standard_info);
-                
-                // 🌟 [수정] 데이터 저장 및 초기 정렬/렌더링
+                // 🌟 데이터 저장 및 초기 정렬/렌더링
                 incidentData = data.incidents; // 서버에서 받은 원본 데이터 저장
-                
-                // 초기 로딩 시 거리순으로 정렬 및 렌더링
                 currentSortColumn = 'distance';
                 sortDirection = 'asc';
-                sortIncidentList('distance'); 
+                sortIncidentList('distance'); // 초기 로딩 시 거리순으로 정렬 및 렌더링
             })
             .catch(error => {
-                console.error("GET 요청 오류:", error);
-
-                // 서버에서 보낸 상세 에러 메시지가 있을 경우 그것을 사용하고, 
-                // 없으면 (Cloudflare 등) 일반적인 통신 오류 메시지를 사용합니다.
-                const errorMessage = error.message.includes("Cloudflare") || error.message.includes("서버 응답 없음")
-                                    ? "Cloudflare 주소 불일치/만료 또는 방화벽 문제" 
-                                    : `GET 요청 실패: ${error.message}`;
-
-                standardTitle.innerHTML = `❌ 서버 연결 오류 (진단: ${errorMessage})`;
-                standardInfoDiv.innerHTML = `<span class="status-failure">서버에 접속할 수 없거나 데이터베이스 오류가 발생했습니다.</span>`;
+                // 주소 오류 메시지를 더 명확하게 표시
+                if (error.message.startsWith('주소 오류')) {
+                    statusMessage.innerHTML = `<span class="status-error">❌ ${error.message}</span>`;
+                } else {
+                    statusMessage.innerHTML = `<span class="status-error">❌ 오류:</span> 서버 연결 또는 Cloudflare 주소 불일치가 의심됩니다. (${error.message})`;
+                }
+                statusMessage.style.display = 'block';
+                incidentList.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">데이터 로드 실패: API_BASE_URL 및 서버 연결 상태를 확인하세요.</td></tr>';
+                document.getElementById('incidentCount').textContent = `0`;
+                console.error("Fetch error:", error);
             });
     }
 
-    function renderStandardInfo(info) {
-        if (!info) {
-            standardTitle.innerHTML = `⚠️ 기준 정류소 정보 없음 (${standardIdInput.value})`;
-            standardInfoDiv.innerHTML = `<span class="status-failure">ARS ID ${standardIdInput.value}에 대한 마스터 정류소 정보가 없습니다.</span>`;
-            return;
-        }
-        standardTitle.innerHTML = `✅ 기준 정류소: ${info.정류소명}`;
-        standardInfoDiv.innerHTML = `
-            <strong>ARS ID:</strong> ${info.id}<br>
-            <strong>위치 (위도/경도):</strong> ${info.lat.toFixed(4)} / ${info.lon.toFixed(4)}
-        `;
-    }
 
-    function renderIncidentList(incidents) {
-        incidentList.innerHTML = '';
-        
-        if (incidents.length === 0) {
-            incidentList.innerHTML = '<tr><td colspan="5" class="status-success">현재 활성 장애 항목이 없습니다.</td></tr>';
-            return;
-        }
+    // --- 기준 정류장 변경 처리 함수 ---
+    function changeStandardId() {
+        const newId = document.getElementById('newStandardId').value.trim();
+        const standardMessage = document.getElementById('standardMessage');
+        standardMessage.style.display = 'none';
 
-        incidents.forEach(incident => {
-            const row = document.createElement('tr');
+        if (newId) {
+            localStorage.setItem('standardId', newId);
+            standardMessage.innerHTML = `<span class="status-success">✅ 성공:</span> 기준 ID가 ${newId}로 변경되었습니다.`;
+            standardMessage.style.display = 'block';
             
-            // 발생 시간 표시 형식 조정: YY-MM-DD HH:MM:SS -> MM-DD\nHH:MM
-            const displayTime = incident.time ? incident.time.substring(5, 16).replace(' ', '<br>') : 'N/A';
-
-            row.innerHTML = `
-                <td><a href="#" onclick="openDetailModal('${incident.id}'); return false;">${incident.id}</a></td>
-                <td>${displayTime}</td>
-                <td>${incident.distance_display}</td>
-                <td class="stop-name">${incident.정류소명}</td>
-                <td class="action-text status-${incident.action ? 'in-progress' : 'pending'}">${incident.action || '조치 필요'}</td>
-            `;
-            incidentList.appendChild(row);
-        });
-    }
-    // ------------------------------------------------------------------------------------------------
-    // 모달 및 처리 함수
-    // ------------------------------------------------------------------------------------------------
-    function openModal(modalId) {
-        document.getElementById(modalId).style.display = 'block';
-        // 모달 열 때 메시지 초기화
-        const messageDiv = document.getElementById(modalId.replace('Modal', 'Message'));
-        if (messageDiv) messageDiv.style.display = 'none';
+            reloadMainList();
+            setTimeout(() => closeModal('standardModal'), 1000);
+        } else {
+            standardMessage.innerHTML = `<span class="status-error">❌ 오류:</span> ARS ID를 입력해주세요.`;
+            standardMessage.style.display = 'block';
+        }
     }
 
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-    }
-
-    // 모달 외부 클릭 시 닫기
-    window.onclick = function(event) {
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        });
-    }
-
-    function openDetailModal(arsId) {
-        const detailModal = document.getElementById('detailModal');
-        const modalMessage = document.getElementById('modalMessage');
-        const actionText = document.getElementById('actionText');
+    // --- 장애 상세 모달 표시 함수 ---
+    function showDetailModal(id, name, startTime, action) {
+        document.getElementById('detailTitle').textContent = `장애 상세: ${name}`;
+        document.getElementById('detailId').textContent = id;
+        document.getElementById('detailName').textContent = name;
+        document.getElementById('detailStartTime').textContent = startTime;
+        document.getElementById('detailAction').textContent = action;
+        document.getElementById('currentDetailId').value = id;
         
-        modalMessage.style.display = 'none';
-        actionText.value = ''; // 텍스트 영역 초기화
-        
-        fetch(API_BASE_URL + `/incident_details/${arsId}`)
+        document.getElementById('deleteMessage').style.display = 'none';
+        openModal('detailModal');
+    }
+
+    // --- 장애 처리 완료 (삭제) 함수 ---
+    function deleteIncident() {
+        const deleteStopId = document.getElementById('currentDetailId').value;
+        const deleteMessage = document.getElementById('deleteMessage');
+        deleteMessage.style.display = 'none';
+
+        if (confirm(`${deleteStopId} 정류장의 장애 처리를 완료하고 목록에서 삭제하시겠습니까?`)) {
+            fetch(API_BASE_URL + `/incident_details/${deleteStopId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action_type: 'DELETE', action_text: '처리 완료' })
+            })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status} (${response.statusText})`);
@@ -508,177 +464,37 @@
                 return response.json();
             })
             .then(data => {
-                // 마스터 정보
-                document.getElementById('modalStopName').textContent = data.master_info.정류소명;
-                document.getElementById('modalStopId').textContent = data.master_info.id;
-                
-                // 활성 장애 정보
-                if (data.active_data) {
-                    document.getElementById('modalStartTime').textContent = data.active_data.time || 'N/A';
-                    actionText.value = data.active_data.action || '';
-                    document.getElementById('actionText').disabled = false;
-                    document.querySelector('.btn-primary').style.display = 'inline-block';
-                    document.querySelector('.btn-danger').style.display = 'inline-block';
+                deleteMessage.style.display = 'block';
+                if (data.message.includes('성공')) {
+                    deleteMessage.innerHTML = `<span class="status-success">✅ 성공:</span> ${data.message}`;
+                    reloadMainList();
+                    setTimeout(() => closeModal('detailModal'), 1000);
                 } else {
-                    // 활성 장애가 아닐 경우의 처리
-                    document.getElementById('modalStartTime').textContent = '현재 활성 장애 아님';
-                    actionText.value = '이 정류장은 현재 활성 장애 목록에 없습니다.';
-                    document.getElementById('actionText').disabled = true;
-                    document.querySelector('.btn-primary').style.display = 'none';
-                    document.querySelector('.btn-danger').style.display = 'none';
+                    deleteMessage.innerHTML = `<span class="status-error">❌ 실패:</span> ${data.message || '서버 오류'}`;
                 }
-
-                // 거리 정보 (활성 목록에 있는 경우에만 표시)
-                const incident = incidentData.find(item => item.id === arsId);
-                const distanceDisplay = incident ? incident.distance_display : 'N/A';
-                document.getElementById('modalDistance').textContent = distanceDisplay;
-
-
-                // 이력 표시
-                const historyList = document.getElementById('historyList');
-                historyList.innerHTML = '';
-                if (data.history.length > 0) {
-                    data.history.forEach(item => {
-                        historyList.innerHTML += `<p>
-                            <span class="status-${item.status === 'COMPLETED' ? 'success' : 'pending'}">[${item.status === 'COMPLETED' ? '완료' : '등록'}]</span> 
-                            ${item.time.substring(5, 16)} (${item.start_time.substring(5, 16)}) - ${item.action}
-                        </p>`;
-                    });
-                } else {
-                    historyList.innerHTML = '<p>처리 이력이 없습니다.</p>';
-                }
-
-                openModal('detailModal');
             })
             .catch(error => {
-                alert(`상세 정보 로딩 오류: ${error.message}`);
-                console.error("Detail load error:", error);
-            });
-    }
-
-    function updateIncidentAction() {
-        const arsId = document.getElementById('modalStopId').textContent;
-        const actionText = document.getElementById('actionText').value;
-        const modalMessage = document.getElementById('modalMessage');
-
-        if (!actionText.trim()) {
-            modalMessage.innerHTML = `<span class="error">❌ 오류:</span> 진행 상황을 입력해 주세요.`;
-            modalMessage.style.display = 'block';
-            return;
-        }
-
-        if (confirm(`[${arsId}]의 진행 상황을 '${actionText}'로 업데이트하시겠습니까?`)) {
-            fetch(API_BASE_URL + `/incident_details/${arsId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action_type: 'UPDATE_ACTION', action_text: actionText })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(errorData => { throw new Error(errorData.message || response.statusText); });
-                }
-                return response.json();
-            })
-            .then(data => {
-                modalMessage.innerHTML = `<span class="status-success">✅ 성공:</span> ${data.message}`;
-                modalMessage.style.display = 'block';
-                reloadMainList();
-            })
-            .catch(error => {
-                modalMessage.innerHTML = `<span class="status-failure">❌ 실패:</span> ${error.message}`;
-                modalMessage.style.display = 'block';
-                console.error("Update error:", error);
-            });
-        }
-    }
-
-    function deleteIncident() {
-        const arsId = document.getElementById('modalStopId').textContent;
-        const actionText = document.getElementById('actionText').value;
-        const modalMessage = document.getElementById('modalMessage');
-
-        if (!actionText.trim()) {
-            modalMessage.innerHTML = `<span class="error">❌ 오류:</span> 조치 완료 내용을 입력해 주세요.`;
-            modalMessage.style.display = 'block';
-            return;
-        }
-
-        if (confirm(`[${arsId}]의 조치를 완료하고 활성 목록에서 제거하시겠습니까? (이력에 저장됩니다)`)) {
-            fetch(API_BASE_URL + `/incident_details/${arsId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action_type: 'DELETE', action_text: actionText })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(errorData => { throw new Error(errorData.message || response.statusText); });
-                }
-                return response.json();
-            })
-            .then(data => {
-                modalMessage.innerHTML = `<span class="status-success">✅ 성공:</span> ${data.message}`;
-                modalMessage.style.display = 'block';
-                reloadMainList();
-                setTimeout(() => closeModal('detailModal'), 1500);
-            })
-            .catch(error => {
-                modalMessage.innerHTML = `<span class="status-failure">❌ 실패:</span> ${error.message}`;
-                modalMessage.style.display = 'block';
+                deleteMessage.innerHTML = `<span class="status-error">❌ 통신 오류:</span> 서버 연결 상태를 확인하세요.`;
+                deleteMessage.style.display = 'block';
                 console.error("Delete error:", error);
             });
         }
     }
 
-    function processSampleText() {
-        const sampleText = document.getElementById('sampleText').value;
-        const sampleMessage = document.getElementById('sampleMessage');
-        
-        if (!sampleText.trim()) {
-            sampleMessage.innerHTML = `<span class="error">❌ 오류:</span> 등록할 텍스트를 입력해 주세요.`;
-            sampleMessage.style.display = 'block';
-            return;
-        }
-
-        fetch(API_BASE_URL + '/process_sample', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sample_text: sampleText })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(errorData => { throw new Error(errorData.message || response.statusText); });
-            }
-            return response.json();
-        })
-        .then(data => {
-            sampleMessage.style.display = 'block';
-            if (data.message.includes('성공')) {
-                sampleMessage.innerHTML = `<span class="status-success">✅ 성공:</span> ${data.message}`;
-                reloadMainList();
-                setTimeout(() => closeModal('sampleModal'), 1500);
-            } else {
-                sampleMessage.innerHTML = `<span class="status-failure">❌ 실패:</span> ${data.message || '서버 오류'}`;
-            }
-        })
-        .catch(error => {
-            sampleMessage.innerHTML = `<span class="status-failure">❌ 통신 오류:</span> 서버 연결 또는 Cloudflare 주소 불일치가 의심됩니다.`;
-            sampleMessage.style.display = 'block';
-            console.error("Sample process error:", error);
-        });
-    }
-
-    function createIncident() {
-        const manualStopId = document.getElementById('manualStopId').value;
-        const manualActionText = document.getElementById('manualActionText').value;
+    // --- 수동 장애 등록 함수 ---
+    function createManualIncident() {
+        const manualStopId = document.getElementById('manualStopId').value.trim();
+        const manualActionText = document.getElementById('manualActionText').value.trim();
         const manualMessage = document.getElementById('manualMessage');
+        manualMessage.style.display = 'none';
 
-        if (!manualStopId.trim() || !manualActionText.trim()) {
-            manualMessage.innerHTML = `<span class="error">❌ 오류:</span> ARS ID와 초기 조치 내용을 모두 입력해야 합니다.`;
+        if (!manualStopId || !manualActionText) {
+            manualMessage.innerHTML = `<span class="status-error">❌ 오류:</span> 정류장 ID/정류소명과 조치 내용을 모두 입력해야 합니다.`;
             manualMessage.style.display = 'block';
             return;
         }
 
-        if (confirm(`[${manualStopId}]를 현재 시각으로 신규 장애 등록하시겠습니까? (초기 진행사항이 함께 저장됩니다)`)) {
+        if (confirm(`${manualStopId}에 대해 [${manualActionText}] 내용으로 장애를 등록하시겠습니까? 등록 시 현재 시간과 진행사항이 함께 저장됩니다.`)) {
             fetch(API_BASE_URL + `/incident_details/${manualStopId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -686,7 +502,7 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    return response.json().then(errorData => { throw new Error(errorData.message || response.statusText); });
+                    throw new Error(`HTTP ${response.status} (${response.statusText})`);
                 }
                 return response.json();
             })
@@ -697,11 +513,11 @@
                     reloadMainList();
                     setTimeout(() => closeModal('manualModal'), 1000);
                 } else {
-                    manualMessage.innerHTML = `<span class="status-failure">❌ 실패:</span> ${data.message || '서버 오류'}`;
+                    manualMessage.innerHTML = `<span class="status-error">❌ 실패:</span> ${data.message || '서버 오류'}`;
                 }
             })
             .catch(error => {
-                manualMessage.innerHTML = `<span class="status-failure">❌ 통신 오류:</span> 서버 연결 또는 Cloudflare 주소 불일치가 의심됩니다.`;
+                manualMessage.innerHTML = `<span class="status-error">❌ 통신 오류:</span> 서버 연결 또는 Cloudflare 주소 불일치가 의심됩니다.`;
                 manualMessage.style.display = 'block';
                 console.error("Manual create error:", error);
             });
@@ -712,8 +528,10 @@
     // 페이지 로드 시 초기 기준 ID로 현황 데이터를 바로 표시
     window.onload = function() {
         reloadMainList();
+        // 5초마다 목록 새로고침
+        setInterval(reloadMainList, 5000); 
     }
-    </script>
+</script>
 
 </body>
 </html>
