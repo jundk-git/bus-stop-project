@@ -237,9 +237,9 @@
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://interested-historic-chassis-marble.trycloudflare.com'; 
+    const API_BASE_URL = 'https://myth-bristol-charm-exciting.trycloudflare.com'; 
 
-    let currentStandardId = '02-223'; 
+    let currentStandardId = '22-142'; 
     let activeStopId = null;         
 
     // 모달 제어 함수
@@ -307,7 +307,7 @@
                             <tr>
                                 <th style="width: 15%;">정류장번호</th>
                                 <th style="width: 15%;">발생시간</th>  <th style="width: 15%;">거리(km)</th>
-                                <th style="width: 35%;">정류소명</th>
+                //           <th style="width: 35%;">정류소명</th>
                                 <th style="width: 20%;">진행사항</th> 
                             </tr>
                         </thead>
@@ -315,7 +315,7 @@
                 `;
 
                 if (data.incidents.length === 0) {
-                    listHtml += `<tr><td colspan="5" style="text-align: center; color: #6c757d;">현재 활성 장애 목록이 없습니다.</td></tr>`;
+                    listHtml += `<tr><td colspan="4" style="text-align: center; color: #6c757d;">현재 활성 장애 목록이 없습니다.</td></tr>`;
                 } else {
                     data.incidents.forEach(item => {
                         // 🚨 수정된 부분: item.action이 null일 경우 빈 문자열('')을 할당합니다.
@@ -329,8 +329,9 @@
                                 data-id="${item.id}">
                                 
                                 <td><span class="incident-text">${item.id}</span></td> 
-                                <td><span class="incident-text">${item.time}</span></td>  <td><span class="incident-text">${distanceValue}</span></td> 
-                                <td><span class="incident-text">${item.정류소명}</span></td>
+                                <td><span class="incident-text">${item.time}</span></td>  
+                                <td><span class="incident-text">${distanceValue}</span></td> 
+                        //        <td><span class="incident-text">${item.정류소명}</span></td>
                                 <td>${actionDisplay}</td> </tr>
                         `;
                     });
