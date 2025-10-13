@@ -307,12 +307,13 @@
                             <tr>
                                 <th style="width: 15%;">정류장번호</th>
                                 <th style="width: 15%;">발생시간</th>  <th style="width: 15%;">거리(km)</th>
-                //           <th style="width: 35%;">정류소명</th>
                                 <th style="width: 20%;">진행사항</th> 
                             </tr>
                         </thead>
                         <tbody>
                 `;
+
+         //           <th style="width: 35%;">정류소명</th>
 
                 if (data.incidents.length === 0) {
                     listHtml += `<tr><td colspan="4" style="text-align: center; color: #6c757d;">현재 활성 장애 목록이 없습니다.</td></tr>`;
@@ -331,7 +332,6 @@
                                 <td><span class="incident-text">${item.id}</span></td> 
                                 <td><span class="incident-text">${item.time}</span></td>  
                                 <td><span class="incident-text">${distanceValue}</span></td> 
-                        //        <td><span class="incident-text">${item.정류소명}</span></td>
                                 <td>${actionDisplay}</td> </tr>
                         `;
                     });
@@ -339,6 +339,9 @@
                 listHtml += `</tbody></table>`;
                 incidentList.innerHTML = listHtml;
             })
+
+                        //        <td><span class="incident-text">${item.정류소명}</span></td>
+
             .catch(error => {
                 // 💡 최종 진단 메시지: POST 요청은 성공했더라도 GET 요청은 Ngrok 주소가 틀리면 실패합니다.
                 const errorMessage = error.message.includes("Unexpected token '<'") 
