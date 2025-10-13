@@ -62,18 +62,22 @@
         /* 테이블 스타일 */
         .incident-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .incident-table th, .incident-table td {
-            padding: 8px 5px; 
+            padding: 1px 5px; 
             text-align: left;
             border-bottom: 1px solid #ddd;
-            font-size: 0.95em;
+            font-size: 0.8em;
+            white-space: nowrap; 
         }
         .incident-table th {
             background-color: #e9ecef;
             font-weight: 600;
             color: #495057;
+            font-size: 0.8em; /* ⭐ 추가: 헤더 글꼴 크기 압축 */
         }
         .incident-table td {
+      
             color: #000; 
+            font-size: 0.8em; /* ⭐ 추가: 본문 글꼴 크기 압축 */
         }
 
         .incident-table tbody tr:hover {
@@ -90,15 +94,28 @@
 
         /* 기준 정류장 정보 */
         #standardInfo {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            padding: 15px;
+            font-size: 1.0rem;
+            margin-bottom: 5px;
+            padding: 5px 15px;
             border: 1px solid #007bff;
             border-radius: 8px;
             background-color: #e6f2ff;
+
+    /* ⭐ 추가: 타이틀을 한 줄로 강제하고 넘치는 텍스트는 숨김 */
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+
+
         }
         #standardInfo .location-success { color: #007bff; font-weight: bold; }
-        #standardTitle { min-height: 24px; } 
+        #standardTitle { 
+                   /*        min-height: 24px;
+    /* ⭐ 추가: 글꼴 크기 압축 및 줄 바꿈 방지 */
+    font-size: 0.9em; 
+    white-space: nowrap;
+
+                           } 
 
         /* 목록의 일반 글자색 */
         .incident-text { 
@@ -295,7 +312,7 @@
                         return `<span class="type-color">${p1}</span>`;
                     });
 
-                    standardTitle.innerHTML = `✅ 현재 기준 정류장: ${displayStopName} <span class="location-success">(위치 로드 성공)</span>`;
+                    standardTitle.innerHTML = `✅ 정류장: ${displayStopName} <span class="location-success"></span>`;
                 } else {
                     standardTitle.innerHTML = `❌ 기준 정류장: ${currentStandardId} <span class="error">(위치 로드 실패 / DB 확인 필요)</span>`;
                 }
@@ -306,14 +323,14 @@
                         <thead>
                             <tr>
                                 <th style="width: 15%;">정류장번호</th>
-                                <th style="width: 15%;">발생시간</th>  <th style="width: 15%;">거리(km)</th>
-                                <th style="width: 20%;">진행사항</th> 
+                                <th style="width: 15%;">발생시간</th>  
+                                <th style="width: 15%;">거리(km)</th>
+                                <th style="width: 55%;">진행사항</th> 
                             </tr>
                         </thead>
                         <tbody>
                 `;
 
-         //           <th style="width: 35%;">정류소명</th>
 
                 if (data.incidents.length === 0) {
                     listHtml += `<tr><td colspan="4" style="text-align: center; color: #6c757d;">현재 활성 장애 목록이 없습니다.</td></tr>`;
@@ -340,7 +357,7 @@
                 incidentList.innerHTML = listHtml;
             })
 
-                        //        <td><span class="incident-text">${item.정류소명}</span></td>
+   
 
             .catch(error => {
                 // 💡 최종 진단 메시지: POST 요청은 성공했더라도 GET 요청은 Ngrok 주소가 틀리면 실패합니다.
