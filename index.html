@@ -199,7 +199,7 @@ body {
         </div>
 
         <p style="margin-top: 20px; font-size: 0.9em; color: #6c757d;">
-            * 항목클릭 : 거리계산 기준 (한번 : 기준 /두번 : 상세)
+            * 항목클릭 : 한번-거리, 두번-시설물 세부정보,진행사항 관리
         </p>
         
         <div class="btn-group" style="margin-top: 25px; justify-content: flex-start;">
@@ -213,7 +213,7 @@ body {
         <div class="modal-content">
             <span class="close" onclick="closeModal('batchModal')">&times;</span>
             <h2>장애 일괄등록</h2>
-            <p>카카오톡 장애 BIT 장애공지 봇을 복사하여 붙여넣으세요.</p>
+            <p>BIT 장애공지 봇을 복사하여 붙여넣으세요.</p>
             <textarea id="sampleText" rows="10" placeholder="예시: [종류] 02-223 09-27 10:15 / [종류] 01-118 09-27 13:00"></textarea>
             <div id="batchMessage" class="modal-message"></div>
             <div class="btn-group">
@@ -225,13 +225,11 @@ body {
      <div id="detailModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('detailModal')">&times;</span>
-            /* <h2>상세 정보 및 진행 현황</h2>                                             */
-            /* <div class="status-info"> */
-            /*    <p>정류장번호: <strong id="detailStopId">N/A</strong></p> */
-            /*    <p>정류소명: <strong id="detailStopName">N/A</strong></p> */
-            /*    <p>현재 상태: <strong id="detailCurrentStatus">N/A</strong></p> */
-            /*    <p>발생 시각: <strong id="detailTime">N/A</strong></p> */
-            /* </div> */
+             <h2>상세 정보 및 진행 현황</h2>                                             
+             <div class="status-info"> 
+                <p>정류장번호: <strong id="detailStopId">N/A</strong> / <strong id="detailStopName">N/A</strong></p> 
+                <p>발생 시각: <strong id="detailTime">N/A</strong></p> 
+             </div>
             
             <h3 style="margin-top: 15px;">시설물 세부 정보</h3>
             <div class="status-info" style="font-size: 0.9em; background-color: #f0f8ff; border: 1px solid #cceeff;">
