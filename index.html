@@ -41,7 +41,7 @@ body {
     border-radius: 0; 
     box-shadow: none; 
 }
-        }
+        
         h1 { color: #333; font-size: 1.5rem; margin-bottom: 0.5rem; text-align: center; }
         h2 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 1rem; }
         
@@ -289,8 +289,12 @@ body {
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
+    
+    // ⭐ 추가: 정렬 상태 변수
+    let currentSortBy = 'distance';  // 기본 정렬 기준: 'distance'
 
-    // 모달 제어 함수
+
+    // 모달 제어 함수 (유지)
     function openModal(modalId) {
         document.getElementById(modalId).style.display = 'block';
         if (modalId === 'batchModal') {
@@ -316,6 +320,16 @@ body {
         currentStandardId = stopId;
         reloadMainList();
     }
+    
+    // ⭐ 추가: 정렬 기준 전환 함수
+    function toggleSort(sortBy) {
+        if (currentSortBy !== sortBy) {
+            currentSortBy = sortBy;
+        }
+        // 서버에서 이미 내림차순/오름차순이 고정되어 있으므로 기준만 변경 후 새로고침
+        reloadMainList();
+    }
+
 
     // 활성 장애 목록을 새로 로드하는 함수 (GET 요청)
     function reloadMainList() {
@@ -324,7 +338,8 @@ body {
         
         standardTitle.innerHTML = `🔄 현황 로드 중...`; 
 
-        fetch(API_BASE_URL + `/get_active_incidents?standard_id=${currentStandardId}`)
+        // ⭐ 수정: sort_by 쿼리 매개변수를 추가하여 서버에 정렬 기준 전달
+        fetch(API_BASE_URL + `/get_active_incidents?standard_id=${currentStandardId}&sort_by=${currentSortBy}`)
             .then(response => {
                 // 서버 응답 상태 확인: 404, 500 등의 오류를 명확히 진단
                 if (!response.ok) {
@@ -353,9 +368,9 @@ body {
                     <table class="incident-table">
                         <thead>
                             <tr>
-                                <th style="width: 15%;">정류장번호</th>
-                                <th style="width: 15%;">발생시간</th>  
-                                <th style="width: 15%;">거리</th>
+                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('id')">정류장번호 ⇅</th>
+                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('time')">발생시간 ⇅</th>  
+                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('distance')">거리 ⇅</th>
                                 <th style="width: 55%;">진행사항</th> 
                             </tr>
                         </thead>
