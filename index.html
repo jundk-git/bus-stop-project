@@ -41,7 +41,7 @@ body {
     border-radius: 0; 
     box-shadow: none; 
 }
-        }
+        
         h1 { color: #333; font-size: 1.5rem; margin-bottom: 0.5rem; text-align: center; }
         h2 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 1rem; }
         
@@ -56,9 +56,6 @@ body {
         
         /* 버튼 스타일 */
         .btn-group { margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end; }
-        .btn-bottom {
-            flex-grow: 0; 
-        }
         .btn {
             padding: 10px 18px;
             border: none;
@@ -67,6 +64,9 @@ body {
             font-weight: bold;
             transition: background-color 0.2s;
             flex-grow: 1; 
+        }
+        .btn-bottom {
+            flex-grow: 0; 
         }
         .btn:disabled {
             background-color: #cccccc !important;
@@ -286,11 +286,15 @@ body {
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
     const API_BASE_URL = 'https://courtesy-hollywood-physical-measurement.trycloudflare.com'; 
-      
+
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
+    
+    // ⭐ 추가: 정렬 상태 변수
+    let currentSortBy = 'distance';  // 기본 정렬 기준: 'distance'
 
-    // 모달 제어 함수
+
+    // 모달 제어 함수 (유지)
     function openModal(modalId) {
         document.getElementById(modalId).style.display = 'block';
         if (modalId === 'batchModal') {
@@ -316,6 +320,16 @@ body {
         currentStandardId = stopId;
         reloadMainList();
     }
+    
+    // ⭐ 추가: 정렬 기준 전환 함수
+    function toggleSort(sortBy) {
+        if (currentSortBy !== sortBy) {
+            currentSortBy = sortBy;
+        }
+        // 서버에서 이미 내림차순/오름차순이 고정되어 있으므로 기준만 변경 후 새로고침
+        reloadMainList();
+    }
+
 
     // 활성 장애 목록을 새로 로드하는 함수 (GET 요청)
     function reloadMainList() {
@@ -324,7 +338,8 @@ body {
         
         standardTitle.innerHTML = `🔄 현황 로드 중...`; 
 
-        fetch(API_BASE_URL + `/get_active_incidents?standard_id=${currentStandardId}`)
+        // ⭐ 수정: sort_by 쿼리 매개변수를 추가하여 서버에 정렬 기준 전달
+        fetch(API_BASE_URL + `/get_active_incidents?standard_id=${currentStandardId}&sort_by=${currentSortBy}`)
             .then(response => {
                 // 서버 응답 상태 확인: 404, 500 등의 오류를 명확히 진단
                 if (!response.ok) {
@@ -353,9 +368,9 @@ body {
                     <table class="incident-table">
                         <thead>
                             <tr>
-                                <th style="width: 15%;">정류장번호</th>
-                                <th style="width: 15%;">발생시간</th>  
-                                <th style="width: 15%;">거리</th>
+                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('id')">정류장번호 ↓</th>
+                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('time')">발생시간 ↓</th>  
+                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('distance')">거리↓</th>
                                 <th style="width: 55%;">진행사항</th> 
                             </tr>
                         </thead>
@@ -474,19 +489,19 @@ body {
                 
                 // 💡 seoul_data 정보 표시 💡
                 // 값이 null이면 '정보 없음'으로 표시
-            document.getElementById('detailAssetKey').textContent = masterInfo["시설물키"] || '정보 없음';
-            document.getElementById('detailBusinessType').textContent = masterInfo["사업유형"] || '정보 없음';
-            document.getElementById('detailAssetType1').textContent = masterInfo["시설물유형.1"] || '정보 없음';
+            document.getElementById('detailAssetKey').textContent = masterInfo["시설물키"] || '';
+            document.getElementById('detailBusinessType').textContent = masterInfo["사업유형"] || '';
+            document.getElementById('detailAssetType1').textContent = masterInfo["시설물유형.1"] || '';
 
-                document.getElementById('detailAssetName').textContent = masterInfo.시설물명 || '정보 없음';
-                document.getElementById('detailAssetType').textContent = masterInfo.시설물유형 || '정보 없음';
-                document.getElementById('detailCommMethod').textContent = masterInfo.통신방식 || '정보 없음';
-                document.getElementById('detailCommType').textContent = masterInfo.통신사_유형 || '정보 없음';
-                document.getElementById('detailOperator').textContent = masterInfo.사업자_이름 || '정보 없음';
-                document.getElementById('detailManufacturer').textContent = masterInfo.제조자 || '정보 없음';
-                document.getElementById('detailBITType').textContent = masterInfo.BIT제품종류 || '정보 없음';
-                document.getElementById('detailBITUsage').textContent = masterInfo.BIT사용여부 || '정보 없음';
-                document.getElementById('detailIncidentCount').textContent = masterInfo.장애건수 !== null ? masterInfo.장애건수 : '0';
+                document.getElementById('detailAssetName').textContent = masterInfo.시설물명 || '';
+                document.getElementById('detailAssetType').textContent = masterInfo.시설물유형 || '';
+                document.getElementById('detailCommMethod').textContent = masterInfo.통신방식 || '';
+                document.getElementById('detailCommType').textContent = masterInfo.통신사_유형 || '';
+                document.getElementById('detailOperator').textContent = masterInfo.사업자_이름 || '';
+                document.getElementById('detailManufacturer').textContent = masterInfo.제조자 || '';
+                document.getElementById('detailBITType').textContent = masterInfo.BIT제품종류 || '';
+                document.getElementById('detailBITUsage').textContent = masterInfo.BIT사용여부 || '';
+                document.getElementById('detailIncidentCount').textContent = masterInfo.장애건수 !== null ? masterInfo.장애건수 : '';
 
 
                
