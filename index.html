@@ -43,7 +43,13 @@ body {
 }
         
         h1 { color: #333; font-size: 1.5rem; margin-bottom: 0.5rem; text-align: center; }
-        h2 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 1rem; }
+        h2 { 
+            color: #2c3e50; 
+            border-bottom: 2px solid #ecf0f1; 
+            padding-bottom: 5px; /* 공백 줄임 */
+            margin-top: 0.5rem; /* 공백 줄임 */
+            margin-bottom: 0.5rem; /* 공백 줄임 */
+        }
         
         input, textarea { 
             width: 100%; 
@@ -112,7 +118,14 @@ body {
         .status-failure { color: #dc3545; font-weight: bold; } 
         .status-offline { color: #ffc107; font-weight: bold; } 
         .status-pending { color: #6c757d; } 
-        .status-info { background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #eee;} 
+        /* 🚨 상세 정보 모달 헤더 영역 공백 축소 */
+        .status-info { 
+            background-color: #f8f9fa; 
+            padding: 8px 15px; /* 상하 패딩 15px -> 8px로 축소 */
+            border-radius: 8px; 
+            margin-bottom: 5px; /* 하단 마진 10px -> 5px로 축소 */
+            border: 1px solid #eee;
+        } 
 
         /* 기준 정류장 정보 */
         #standardInfo {
@@ -285,7 +298,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://die-winston-intend-fair.trycloudflare.com'; 
+    const API_BASE_URL = 'https://childhood-ownership-mas-performing.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
