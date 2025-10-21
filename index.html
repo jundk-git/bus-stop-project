@@ -250,19 +250,19 @@ body {
      <div id="detailModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('detailModal')">&times;</span>
-             <h2>상세 정보 및 진행 현황</h2>                                             
-             <div class="status-info"> 
-                <p><strong id="detailStopId">N/A</strong> / <strong id="detailStopName">N/A</strong> /<strong id="detailCurrentStatus">N/A</strong>/<strong id="detailTime">N/A</strong></p> 
-             </div>
+             <h3>상세 정보 및 진행 현황</h3>                                             
+         <div class="status-info"> 
+                <p><strong id="detailStopId">N/A</strong> / <strong id="detailStopName">N/A</strong> / <strong id="detailTime">N/A</strong></p> </div>    
+         </div>
             
             <h3 style="margin-top: 15px;">시설물 세부 정보</h3>
              <div class="status-info" style="font-size: 0.9em; background-color: #f0f8ff; border: 1px solid #cceeff;">
-                <p>시설물키: <strong id="detailAssetKey" class="asset-key-highlight">N/A</strong> / 사업유형: <strong id="detailBusinessType">N/A</strong></p>
-                <p>디스플레이: <strong id="detailAssetType1">N/A</strong></p>
-                <p>정류장명: <strong id="detailAssetName">N/A</strong> / 시설물유형: <strong id="detailAssetType">N/A</strong></p>
-                <p>통신방식: <strong id="detailCommMethod">N/A</strong> / 통신사 유형: <strong id="detailCommType">N/A</strong></p>
-                <p>사업자 이름: <strong id="detailOperator">N/A</strong> / 제조자: <strong id="detailManufacturer">N/A</strong></p>
-                <p>BIT제품종류: <strong id="detailBITType">N/A</strong> / BIT사용여부: <strong id="detailBITUsage">N/A</strong> / 누적 장애건수: <strong id="detailIncidentCount" style="color: #dc3545;">N/A</strong></p>
+                <p>시설물키:<strong id="detailAssetKey" class="asset-key-highlight">N/A</strong>/사업유형:<strong id="detailBusinessType">N/A</strong>
+                <p>디스플레이:<strong id="detailAssetType1">N/A</strong>
+                <p>정류장명:<strong id="detailAssetName">N/A</strong>/시설물유형: <strong id="detailAssetType">N/A</strong>
+                <p>통신방식:<strong id="detailCommMethod">N/A</strong>/통신사 유형: <strong id="detailCommType">N/A</strong>
+                <p>사업자 이름:<strong id="detailOperator">N/A</strong>/제조자: <strong id="detailManufacturer">N/A</strong>
+                <p>BIT제품종류:<strong id="detailBITType">N/A</strong>/BIT사용여부: <strong id="detailBITUsage">N/A</strong>/누적장애건:<strong id="detailIncidentCount" style="color: #dc3545;">N/A</strong>
              </div>
            
             <h3>진행사항 관리</h3>
@@ -298,7 +298,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://childhood-ownership-mas-performing.trycloudflare.com'; 
+    const API_BASE_URL = 'https://display-leaders-cafe-subsidiary.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
