@@ -301,23 +301,23 @@ body {
         
         <div style="margin-bottom: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
             <p style="margin: 5px 0; font-weight: bold;">1. 유형별 첨부파일 선택 (선택 사항)</p>
-            <label for="independentFile">독립형 파일:</label>
-            <input type="file" id="independentFile" accept=".csv, .txt" style="margin-bottom: 5px; border: none;"><br>
+            <label for="independentFile">독립형 첨부파일:</label>
+            <input type="file" id="independentFile" name="independent_file" accept=".csv, .txt" style="margin-bottom: 5px; border: none;"><br>
             
-            <label for="economicalFile">알뜰형 파일:</label>
-            <input type="file" id="economicalFile" accept=".csv, .txt" style="margin-bottom: 5px; border: none;"><br>
+            <label for="economicalFile">알뜰형 첨부파일:</label>
+            <input type="file" id="economicalFile" name="economical_file" accept=".csv, .txt" style="margin-bottom: 5px; border: none;"><br>
             
-            <label for="miniFile">미니형 파일:</label>
-            <input type="file" id="miniFile" accept=".csv, .txt" style="border: none;">
+            <label for="miniFile">미니형 첨부파일:</label>
+            <input type="file" id="miniFile" name="mini_file" accept=".csv, .txt" style="border: none;">
         </div>
 
         <div style="margin-bottom: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
             <p style="margin: 5px 0; font-weight: bold;">2. 장애 조회 기간 설정</p>
-            <label for="startDate">FROM (YYYY-MM-DD HH):</label>
-            <input type="datetime-local" id="startDate" required>
-            <label for="endDate">TO (YYYY-MM-DD HH):</label>
-            <input type="datetime-local" id="endDate" required>
-            <p style="font-size: 0.8em; color: #6c757d; margin: 5px 0;">* 장애발생시각의 최초 시간 ~ 최종 시간으로 자동 설정됩니다. 1시간 단위 선택.</p>
+            <label for="startDate">FROM (장애발생 최초시간):</label>
+            <input type="datetime-local" id="startDate" name="start_date">
+            <label for="endDate">TO (장애발생 최종시간):</label>
+            <input type="datetime-local" id="endDate" name="end_date">
+            <p style="font-size: 0.8em; color: #6c757d; margin: 5px 0;">* 파일을 첨부하지 않거나 기간을 비워두면 첨부된 데이터의 최소/최대 시간을 기준으로 1시간 단위로 자동 설정됩니다.</p>
         </div>
 
         <div id="centerMessage" class="modal-message"></div>
@@ -334,7 +334,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://weather-advances-active-gzip.trycloudflare.com'; 
+    const API_BASE_URL = 'https://annually-fleet-format-donor.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
@@ -695,64 +695,75 @@ body {
    // ... 기존 JavaScript 코드 (createManualIncident 함수 다음) ...
 
 // 센터 등록: 파일 업로드 및 처리
-function processCenterUpload() {
-    const independentFile = document.getElementById('independentFile').files[0];
-    const economicalFile = document.getElementById('economicalFile').files[0];
-    const miniFile = document.getElementById('miniFile').files[0];
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    const centerMessage = document.getElementById('centerMessage');
-    const centerOutput = document.getElementById('centerOutput');
+    function processCenterUpload() {
+        const independentFile = document.getElementById('independentFile').files[0];
+        const economicalFile = document.getElementById('economicalFile').files[0];
+        const miniFile = document.getElementById('miniFile').files[0];
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const centerMessage = document.getElementById('centerMessage');
+        const centerOutput = document.getElementById('centerOutput');
+        
+        centerMessage.style.display = 'none';
+        centerOutput.value = '파일 처리 중... 잠시만 기다려주세요.';
 
-    centerMessage.style.display = 'none';
-    centerOutput.value = '파일 처리 중... 잠시만 기다려주세요.';
-
-    const formData = new FormData();
-
-    if (independentFile) formData.append('independent_file', independentFile);
-    if (economicalFile) formData.append('economical_file', economicalFile);
-    if (miniFile) formData.append('mini_file', miniFile);
-
-    // 날짜가 입력되었다면 추가 (서버에서 파일이 없으면 자동 기간 설정)
-    if (startDate) formData.append('start_date', startDate);
-    if (endDate) formData.append('end_date', endDate);
-
-    fetch(API_BASE_URL + '/process_center_upload', {
-        method: 'POST',
-        body: formData 
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status} (${response.statusText})`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.error) {
-            centerMessage.innerHTML = `<span class="error">❌ 오류:</span> ${data.error} ${data.details ? '(' + data.details + ')' : ''}`;
+        const formData = new FormData();
+        
+        if (independentFile) formData.append('independent_file', independentFile);
+        if (economicalFile) formData.append('economical_file', economicalFile);
+        if (miniFile) formData.append('mini_file', miniFile);
+        
+        if (!independentFile && !economicalFile && !miniFile) {
+            centerMessage.innerHTML = `<span class="error">❌ 오류:</span> 하나 이상의 첨부파일을 선택해야 합니다.`;
             centerMessage.style.display = 'block';
-            centerOutput.value = `처리 실패: ${data.error}`;
-        } else {
-            centerMessage.innerHTML = `<span class="status-success">✅ 성공:</span> 총 ${data.total_processed_count}건 중 분당 5건 초과 ${data.excluded_count}건 제외. ${data.final_count}건 표시.`;
-            centerMessage.style.display = 'block';
-
-            // 결과 포맷팅
-            let output = "종 류   정류장ID   장애발생시각\n";
-            output += "--------------------------------------\n";
-            data.final_list.forEach(item => {
-                output += `[${item.type}]  ${item.ars_id}   ${item.time}\n`;
-            });
-
-            centerOutput.value = output;
+            centerOutput.value = `처리 실패: 파일을 첨부해주세요.`;
+            return;
         }
-    })
-    .catch(error => {
-        centerMessage.innerHTML = `<span class="error">❌ 통신 오류:</span> 서버 연결 또는 Cloudflare 주소 불일치. (진단: ${error.message})`;
-        centerMessage.style.display = 'block';
-        centerOutput.value = `통신 오류: ${error.message}`;
-        console.error("Center upload error:", error);
-    });
-}
+
+        // 날짜가 입력되었다면 추가 
+        if (startDate) formData.append('start_date', startDate);
+        if (endDate) formData.append('end_date', endDate);
+
+        fetch(API_BASE_URL + '/process_center_upload', {
+            method: 'POST',
+            body: formData 
+        })
+        .then(response => {
+            if (!response.ok) {
+                // 404 오류가 여기서 발생했습니다. 서버에 라우트가 없는 경우입니다.
+                throw new Error(`HTTP ${response.status} (${response.statusText})`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                centerMessage.innerHTML = `<span class="error">❌ 오류:</span> ${data.error} ${data.details ? '(' + data.details + ')' : ''}`;
+                centerMessage.style.display = 'block';
+                centerOutput.value = `처리 실패: ${data.error}`;
+            } else {
+                // 기간 정보를 포함하여 메시지 표시
+                centerMessage.innerHTML = `<span class="status-success">✅ 성공:</span> **기간:** ${data.period || '자동 설정됨'} <br>총 ${data.total_processed_count}건 중 분당 5건 초과 ${data.excluded_count}건 제외. **${data.final_count}건** 표시.`;
+                centerMessage.style.display = 'block';
+                
+                // 결과 포맷팅
+                let output = "종 류  정류장ID  장애발생시각\n";
+                output += "--------------------------------------\n";
+                data.final_list.forEach(item => {
+                    output += `${item.type.padEnd(5)}  ${item.ars_id.padEnd(8)}  ${item.time}\n`;
+                });
+                
+                centerOutput.value = output;
+            }
+        })
+        .catch(error => {
+            // 사용자에게 발생한 404 오류 메시지를 포함한 최종 진단 메시지
+            centerMessage.innerHTML = `<span class="error">❌ 통신 오류:</span> 서버 연결 또는 **Cloudflare 주소 불일치** 또는 **서버 라우트(Endpoint) 미추가**. (진단: ${error.message})`;
+            centerMessage.style.display = 'block';
+            centerOutput.value = `통신 오류: ${error.message}\n\n**해결 방법:**\n1. flask_server.py에 /process_center_upload 라우트 코드를 추가했는지 확인해주세요.\n2. Cloudflare 주소가 정확한지 확인해주세요.`;
+            console.error("Center upload error:", error);
+        });
+    }
+
 
 // ... 나머지 JavaScript 코드 ...
 
