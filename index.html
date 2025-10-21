@@ -228,7 +228,8 @@ body {
             <button class="btn btn-secondary btn-bottom" onclick="reloadMainList()">🔄새로고침</button>
             <button class="btn btn-primary btn-bottom" onclick="openModal('batchModal')">1. 일괄 등록</button>
             <button class="btn btn-primary btn-bottom" onclick="openModal('manualModal')">2. 건별 등록</button>
-        </div>
+            <button class="btn btn-primary btn-bottom" onclick="openModal('centerModal')">3. 센터 등록</button>
+         </div>
     </div>
 
     <div id="batchModal" class="modal">
@@ -292,10 +293,48 @@ body {
         </div>
     </div>
 
+<div id="centerModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('centerModal')">&times;</span>
+        <h2>센터 등록: 파일 업로드 및 기간 설정</h2>
+        <p>BIT 시설물 장애 정보를 업로드하고 조회 기간을 설정합니다.</p>
+        
+        <div style="margin-bottom: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+            <p style="margin: 5px 0; font-weight: bold;">1. 유형별 첨부파일 선택 (선택 사항)</p>
+            <label for="independentFile">독립형 파일:</label>
+            <input type="file" id="independentFile" accept=".csv, .txt" style="margin-bottom: 5px; border: none;"><br>
+            
+            <label for="economicalFile">알뜰형 파일:</label>
+            <input type="file" id="economicalFile" accept=".csv, .txt" style="margin-bottom: 5px; border: none;"><br>
+            
+            <label for="miniFile">미니형 파일:</label>
+            <input type="file" id="miniFile" accept=".csv, .txt" style="border: none;">
+        </div>
+
+        <div style="margin-bottom: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+            <p style="margin: 5px 0; font-weight: bold;">2. 장애 조회 기간 설정</p>
+            <label for="startDate">FROM (YYYY-MM-DD HH):</label>
+            <input type="datetime-local" id="startDate" required>
+            <label for="endDate">TO (YYYY-MM-DD HH):</label>
+            <input type="datetime-local" id="endDate" required>
+            <p style="font-size: 0.8em; color: #6c757d; margin: 5px 0;">* 장애발생시각의 최초 시간 ~ 최종 시간으로 자동 설정됩니다. 1시간 단위 선택.</p>
+        </div>
+
+        <div id="centerMessage" class="modal-message"></div>
+        <textarea id="centerOutput" rows="10" readonly style="margin-top: 10px; font-size: 0.9em; white-space: pre; background-color: #f7f7f7;">여기에 처리 결과가 표시됩니다.</textarea>
+
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="processCenterUpload()">파일 처리 및 목록 표시</button>
+        </div>
+    </div>
+</div>
+
+
+
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://electrical-producers-dictionaries-entered.trycloudflare.com'; 
+    const API_BASE_URL = 'https://weather-advances-active-gzip.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
@@ -653,6 +692,69 @@ body {
         }
     }
 
+   // ... 기존 JavaScript 코드 (createManualIncident 함수 다음) ...
+
+// 센터 등록: 파일 업로드 및 처리
+function processCenterUpload() {
+    const independentFile = document.getElementById('independentFile').files[0];
+    const economicalFile = document.getElementById('economicalFile').files[0];
+    const miniFile = document.getElementById('miniFile').files[0];
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const centerMessage = document.getElementById('centerMessage');
+    const centerOutput = document.getElementById('centerOutput');
+
+    centerMessage.style.display = 'none';
+    centerOutput.value = '파일 처리 중... 잠시만 기다려주세요.';
+
+    const formData = new FormData();
+
+    if (independentFile) formData.append('independent_file', independentFile);
+    if (economicalFile) formData.append('economical_file', economicalFile);
+    if (miniFile) formData.append('mini_file', miniFile);
+
+    // 날짜가 입력되었다면 추가 (서버에서 파일이 없으면 자동 기간 설정)
+    if (startDate) formData.append('start_date', startDate);
+    if (endDate) formData.append('end_date', endDate);
+
+    fetch(API_BASE_URL + '/process_center_upload', {
+        method: 'POST',
+        body: formData 
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status} (${response.statusText})`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            centerMessage.innerHTML = `<span class="error">❌ 오류:</span> ${data.error} ${data.details ? '(' + data.details + ')' : ''}`;
+            centerMessage.style.display = 'block';
+            centerOutput.value = `처리 실패: ${data.error}`;
+        } else {
+            centerMessage.innerHTML = `<span class="status-success">✅ 성공:</span> 총 ${data.total_processed_count}건 중 분당 5건 초과 ${data.excluded_count}건 제외. ${data.final_count}건 표시.`;
+            centerMessage.style.display = 'block';
+
+            // 결과 포맷팅
+            let output = "종 류   정류장ID   장애발생시각\n";
+            output += "--------------------------------------\n";
+            data.final_list.forEach(item => {
+                output += `[${item.type}]  ${item.ars_id}   ${item.time}\n`;
+            });
+
+            centerOutput.value = output;
+        }
+    })
+    .catch(error => {
+        centerMessage.innerHTML = `<span class="error">❌ 통신 오류:</span> 서버 연결 또는 Cloudflare 주소 불일치. (진단: ${error.message})`;
+        centerMessage.style.display = 'block';
+        centerOutput.value = `통신 오류: ${error.message}`;
+        console.error("Center upload error:", error);
+    });
+}
+
+// ... 나머지 JavaScript 코드 ...
 
     // 페이지 로드 시 초기 기준 ID로 현황 데이터를 바로 표시
     window.onload = function() {
