@@ -334,7 +334,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://annually-fleet-format-donor.trycloudflare.com'; 
+    const API_BASE_URL = 'https://dubai-innovations-sherman-psychiatry.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
@@ -692,63 +692,75 @@ body {
         }
     }
 
-   // ... 기존 JavaScript 코드 (createManualIncident 함수 다음) ...
+  // ... 기존 JavaScript 코드 (reloadMainList, openModal, closeModal 등) ...
 
-// 센터 등록: 파일 업로드 및 처리
     function processCenterUpload() {
+        const centerMessage = document.getElementById('centerMessage');
+        const centerOutput = document.getElementById('centerOutput');
+        
+        centerMessage.style.display = 'none';
+        centerOutput.value = '파일 처리 중... 잠시 기다려 주세요.';
+
         const independentFile = document.getElementById('independentFile').files[0];
         const economicalFile = document.getElementById('economicalFile').files[0];
         const miniFile = document.getElementById('miniFile').files[0];
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
-        const centerMessage = document.getElementById('centerMessage');
-        const centerOutput = document.getElementById('centerOutput');
         
-        centerMessage.style.display = 'none';
-        centerOutput.value = '파일 처리 중... 잠시만 기다려주세요.';
-
+        // 폼 데이터 객체 생성 (파일 및 기간 데이터 포함)
         const formData = new FormData();
-        
-        if (independentFile) formData.append('independent_file', independentFile);
-        if (economicalFile) formData.append('economical_file', economicalFile);
-        if (miniFile) formData.append('mini_file', miniFile);
-        
-        if (!independentFile && !economicalFile && !miniFile) {
-            centerMessage.innerHTML = `<span class="error">❌ 오류:</span> 하나 이상의 첨부파일을 선택해야 합니다.`;
-            centerMessage.style.display = 'block';
-            centerOutput.value = `처리 실패: 파일을 첨부해주세요.`;
-            return;
+        if (independentFile) {
+            formData.append('independent_file', independentFile);
+        }
+        if (economicalFile) {
+            formData.append('economical_file', economicalFile);
+        }
+        if (miniFile) {
+            formData.append('mini_file', miniFile);
+        }
+        if (startDate) {
+            formData.append('start_date', startDate);
+        }
+        if (endDate) {
+            formData.append('end_date', endDate);
         }
 
-        // 날짜가 입력되었다면 추가 
-        if (startDate) formData.append('start_date', startDate);
-        if (endDate) formData.append('end_date', endDate);
+        if (formData.entries().next().done) {
+             centerMessage.innerHTML = `<span class=\"error\">❌ 오류:</span> 업로드할 파일을 하나 이상 선택하거나 조회 기간을 입력하세요.`;
+             centerMessage.style.display = 'block';
+             centerOutput.value = '파일 또는 기간이 선택되지 않았습니다.';
+             return;
+        }
 
         fetch(API_BASE_URL + '/process_center_upload', {
             method: 'POST',
+            // FormData 사용 시 Content-Type 헤더를 명시적으로 설정하지 않습니다.
             body: formData 
         })
         .then(response => {
+            // HTTP 404 오류를 포함한 모든 통신 오류 처리
             if (!response.ok) {
-                // 404 오류가 여기서 발생했습니다. 서버에 라우트가 없는 경우입니다.
-                throw new Error(`HTTP ${response.status} (${response.statusText})`);
+                return response.text().then(text => {
+                     // 서버에서 JSON이 아닌 HTML(Flask의 404 페이지 등)을 반환할 수 있으므로, 텍스트로 읽어 오류 메시지를 구성
+                     throw new Error(`HTTP ${response.status} (${response.statusText})`);
+                });
             }
             return response.json();
         })
         .then(data => {
             if (data.error) {
-                centerMessage.innerHTML = `<span class="error">❌ 오류:</span> ${data.error} ${data.details ? '(' + data.details + ')' : ''}`;
+                centerMessage.innerHTML = `<span class=\"error\">❌ 서버 오류:</span> ${data.error}<br>세부 메시지: ${data.details || '없음'}`;
                 centerMessage.style.display = 'block';
-                centerOutput.value = `처리 실패: ${data.error}`;
             } else {
                 // 기간 정보를 포함하여 메시지 표시
-                centerMessage.innerHTML = `<span class="status-success">✅ 성공:</span> **기간:** ${data.period || '자동 설정됨'} <br>총 ${data.total_processed_count}건 중 분당 5건 초과 ${data.excluded_count}건 제외. **${data.final_count}건** 표시.`;
+                centerMessage.innerHTML = `<span class=\"status-success\">✅ 성공:</span> **기간:** ${data.period || '자동 설정됨'} <br>총 ${data.total_processed_count}건 중 분당 5건 초과 ${data.excluded_count}건 제외. **${data.final_count}건** 표시.`;
                 centerMessage.style.display = 'block';
                 
                 // 결과 포맷팅
                 let output = "종 류  정류장ID  장애발생시각\n";
                 output += "--------------------------------------\n";
                 data.final_list.forEach(item => {
+                    // 항목의 길이 조절: [독립]은 5자, [알뜰]은 4자 이므로 padEnd(5) 사용
                     output += `${item.type.padEnd(5)}  ${item.ars_id.padEnd(8)}  ${item.time}\n`;
                 });
                 
@@ -757,13 +769,12 @@ body {
         })
         .catch(error => {
             // 사용자에게 발생한 404 오류 메시지를 포함한 최종 진단 메시지
-            centerMessage.innerHTML = `<span class="error">❌ 통신 오류:</span> 서버 연결 또는 **Cloudflare 주소 불일치** 또는 **서버 라우트(Endpoint) 미추가**. (진단: ${error.message})`;
+            centerMessage.innerHTML = `<span class=\"error\">❌ 통신 오류:</span> 서버 연결 또는 **Cloudflare 주소 불일치** 또는 **서버 라우트(Endpoint) 미추가**. (진단: ${error.message})`;
             centerMessage.style.display = 'block';
             centerOutput.value = `통신 오류: ${error.message}\n\n**해결 방법:**\n1. flask_server.py에 /process_center_upload 라우트 코드를 추가했는지 확인해주세요.\n2. Cloudflare 주소가 정확한지 확인해주세요.`;
             console.error("Center upload error:", error);
         });
     }
-
 
 // ... 나머지 JavaScript 코드 ...
 
