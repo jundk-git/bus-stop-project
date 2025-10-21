@@ -42,7 +42,7 @@ body {
     box-shadow: none; 
 }
         
-        h1 { color: #333; font-size: 1.5rem; margin-bottom: 0.5rem; text-align: center; }
+        h1 { color: #333; font-size: 1.5rem; margin-bottom: 0rem; text-align: center; }
         h2 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 1rem; }
         
         input, textarea { 
@@ -115,13 +115,10 @@ body {
         .status-info { background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #eee;} 
 
         /* 기준 정류장 정보 */
-        #standardInfo {
-            font-size: 1.0rem;
-            margin-bottom: 5px;
-            padding: 5px 15px;
-            border: 1px solid #007bff;
-            border-radius: 8px;
-            background-color: #e6f2ff;
+        # standardInfo { 
+             font-size: 1.0rem; margin: 0; /* ⬅️ 상하 마진 모두 0으로 제거 */  
+             padding: 3px 15px; /* ⬅️ 상하 패딩을 5px에서 3px로 축소 */ 
+             border: 1px solid #007bff; border-radius: 8px; background-color: #e6f2ff;
 
     /* ⭐ 추가: 타이틀을 한 줄로 강제하고 넘치는 텍스트는 숨김 */
     white-space: nowrap; 
@@ -285,7 +282,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://circuits-requirement-grass-filter.trycloudflare.com'; 
+    const API_BASE_URL = 'https://seas-stability-musician-segments.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
