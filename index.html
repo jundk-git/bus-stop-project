@@ -112,7 +112,13 @@ body {
         .status-failure { color: #dc3545; font-weight: bold; } 
         .status-offline { color: #ffc107; font-weight: bold; } 
         .status-pending { color: #6c757d; } 
-        .status-info { background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #eee;} 
+        .status-info { background-color: #f8f9fa; padding: 0 15px; /* ⬅️ 상하 패딩을 0으로 제거 */ 
+        /* 🚨🚨🚨 사용자 요청 사항 삽입 지점 🚨🚨🚨 */
+        .status-info p { 
+            margin: 0; 
+        }
+
+         border-radius: 8px; margin-bottom: 5px; /* 하단 마진 유지 */ border: 1px solid #eee; }
 
         /* 기준 정류장 정보 */
         # standardInfo { 
@@ -283,7 +289,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://lauderdale-correspondence-cir-fluid.trycloudflare.com'; 
+    const API_BASE_URL = 'https://athens-fantastic-artist-kidney.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
