@@ -339,152 +339,8 @@ body {
     let activeStopId = null;         
     // ⭐ 전역 변수 선언 위치 확인 및 초기화
     let centerResultsTextForCopy = ''; 
-    // ----------------------------------------------------
     // ⭐ 추가: 정렬 상태 변수
     let currentSortBy = 'distance';  // 기본 정렬 기준: 'distance'
-
-    // 처리 결과를 요청하신 테이블 형태로 표시하는 함수
-function displayCenterResults(results) {
-    const resultList = document.getElementById('centerResultList');
-    
-    // ⭐ 복사할 텍스트 헤더 설정
-    centerResultsTextForCopy = "종 류\t정류장ID\t장애발생시각\n"; 
-    
-    let tableHtml = `
-        <table class="incident-table small-text">
-            <thead>
-                <tr>
-                    <th style="width: 25%;">종 류</th>
-                    <th style="width: 35%;">정류장ID</th>
-                    <th style="width: 40%;">장애발생시각</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    results.forEach(item => {
-        const type_tag = item.type.replace(/\[|\]/g, ''); 
-        let tag_class = '';
-        if (type_tag === '독립') tag_class = 'status-danger'; 
-        else if (type_tag === '알뜰') tag_class = 'status-warning'; 
-        else if (type_tag === '미니') tag_class = 'status-success'; 
-        
-        tableHtml += `
-            <tr>
-                <td><span class="${tag_class}" style="padding: 2px 5px; border-radius: 3px;">${item.type}</span></td>
-                <td>${item.ars_id}</td>
-                <td>${item.time}</td>
-            </tr>
-        `;
-        // ⭐ 복사할 텍스트 본문 추가 (탭(\t)으로 구분)
-        centerResultsTextForCopy += `${item.type}\t${item.ars_id}\t${item.time}\n`;
-    });
-    
-    tableHtml += `</tbody></table>`;
-    resultList.innerHTML = tableHtml;
-
-    // 만약 결과가 없으면 복사할 내용도 비움
-    if (results.length === 0) {
-        centerResultsTextForCopy = '';
-    }
-}
-
-// index.html 파일의 <script> 태그 내부, displayCenterResults 함수 다음에 추가
-
-// ----------------------------------------------------
-// --- 신규: CSV 처리 결과 복사 함수 (로직 개선) ---
-// ----------------------------------------------------
-// index.html 파일의 <script> 태그 내부
-
-// ----------------------------------------------------
-// --- 신규: CSV 처리 결과 복사 함수 (로직 개선) ---
-// ----------------------------------------------------
-function copyCenterResultsToClipboard() {
-    const messageDisplay = document.getElementById('centerRegisterMessage');
-    messageDisplay.style.display = 'block';
-
-    // ⭐ 수정: 복사할 텍스트를 줄바꿈 기준으로 나누어 라인 수를 확인합니다.
-    const lines = centerResultsTextForCopy.trim().split('\n');
-    const dataCount = lines.length - 1; // 헤더(첫 줄)를 제외한 데이터 라인 수
-
-    if (dataCount <= 0) { // 데이터 라인이 0이거나 음수이면 (헤더만 있거나 비어있으면)
-        messageDisplay.className = 'modal-message warning';
-        messageDisplay.innerHTML = `⚠️ 주의: 복사할 내용이 없습니다. CSV 파일을 먼저 처리하거나 (장애) 데이터가 있는지 확인해주세요.`;
-        return; 
-    }
-
-    // 전역 변수에 저장된 텍스트를 클립보드에 복사
-    navigator.clipboard.writeText(centerResultsTextForCopy)
-        .then(() => {
-            messageDisplay.className = 'modal-message status-success';
-            messageDisplay.innerHTML = `✅ 성공: 총 ${dataCount}건의 결과가 클립보드에 복사되었습니다.`;
-            // 잠시 후 메시지 숨기기
-            setTimeout(() => messageDisplay.style.display = 'none', 2000);
-        })
-        .catch(err => {
-            messageDisplay.className = 'modal-message error';
-            messageDisplay.innerHTML = `❌ 복사 오류: 클립보드 접근 권한이 없거나 브라우저에서 지원하지 않습니다.`;
-            console.error('클립보드 복사 실패:', err);
-        });
-}
-
-
-// ----------------------------------------------------
-// --- 신규: 센터 등록 처리 함수 (submitCenterRegister) 유지 ---
-// ----------------------------------------------------
-// ... (submitCenterRegister 함수는 이전 코드와 동일하게 유지) ...
-
-// ----------------------------------------------------
-// --- 신규: displayCenterResults 함수 (복사 텍스트 생성 로직 명확화) ---
-// ----------------------------------------------------
-function displayCenterResults(results) {
-    const resultList = document.getElementById('centerResultList');
-    
-    // ⭐ 복사할 텍스트 초기화 및 헤더 설정
-    centerResultsTextForCopy = "종 류\t정류장ID\t장애발생시각\n"; 
-    
-    let tableHtml = `
-        <table class="incident-table small-text">
-            <thead>
-                <tr>
-                    <th style="width: 25%;">종 류</th>
-                    <th style="width: 35%;">정류장ID</th>
-                    <th style="width: 40%;">장애발생시각</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    if (results.length === 0) {
-        // ⭐ 수정: 결과가 없으면 복사할 내용도 빈 문자열로 리셋
-        centerResultsTextForCopy = ''; 
-        tableHtml += `<tr><td colspan="3" style="text-align: center; color: #6c757d; padding: 15px;">파일에서 장애 데이터가 발견되지 않았습니다.</td></tr>`;
-    } else {
-        results.forEach(item => {
-            const type_tag = item.type.replace(/\[|\]/g, ''); 
-            let tag_class = '';
-            if (type_tag === '독립') tag_class = 'status-danger'; 
-            else if (type_tag === '알뜰') tag_class = 'status-warning'; 
-            else if (type_tag === '미니') tag_class = 'status-success'; 
-            
-            tableHtml += `
-                <tr>
-                    <td><span class="${tag_class}" style="padding: 2px 5px; border-radius: 3px;">${item.type}</span></td>
-                    <td>${item.ars_id}</td>
-                    <td>${item.time}</td>
-                </tr>
-            `;
-            // 복사할 텍스트 본문 추가 (탭(\t)으로 구분)
-            centerResultsTextForCopy += `${item.type}\t${item.ars_id}\t${item.time}\n`;
-        });
-    }
-    
-    tableHtml += `</tbody></table>`;
-    resultList.innerHTML = tableHtml;
-}
-
-
-// ... (나머지 함수 유지) ...
 
     // 모달 제어 함수 (유지)
     function openModal(modalId) {
@@ -513,12 +369,11 @@ function displayCenterResults(results) {
         reloadMainList();
     }
     
-    // ⭐ 추가: 정렬 기준 전환 함수
+    // ⭐ 정렬 기준 전환 함수
     function toggleSort(sortBy) {
         if (currentSortBy !== sortBy) {
             currentSortBy = sortBy;
         }
-        // 서버에서 이미 내림차순/오름차순이 고정되어 있으므로 기준만 변경 후 새로고침
         reloadMainList();
     }
 
@@ -530,22 +385,18 @@ function displayCenterResults(results) {
         
         standardTitle.innerHTML = `🔄 현황 로드 중...`; 
 
-        // ⭐ 수정: sort_by 쿼리 매개변수를 추가하여 서버에 정렬 기준 전달
         fetch(API_BASE_URL + `/get_active_incidents?standard_id=${currentStandardId}&sort_by=${currentSortBy}`)
             .then(response => {
-                // 서버 응답 상태 확인: 404, 500 등의 오류를 명확히 진단
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status} (${response.statusText})`);
                 }
                 return response.json();
             })
             .then(data => {
-                // 1. 기준 정류장 정보 업데이트 및 색상 적용 (기존 로직 유지)
                 const standardInfo = data.standard_info;
                 if (standardInfo) {
                     let displayStopName = standardInfo.정류소명;
                     
-                    // 정류소명에 포함된 마지막 괄호 그룹(정류소 타입 정보)을 찾아 'type-color' 클래스를 적용합니다.
                     displayStopName = displayStopName.replace(/(\s\([^)]+\))$/, (match, p1) => {
                         return `<span class="type-color">${p1}</span>`;
                     });
@@ -555,7 +406,6 @@ function displayCenterResults(results) {
                     standardTitle.innerHTML = `❌ 기준 정류장: ${currentStandardId} <span class="error">(위치 로드 실패 / DB 확인 필요)</span>`;
                 }
                 
-                // 2. 활성 장애 목록 생성 (테이블 뷰)
                 let listHtml = `
                     <table class="incident-table">
                         <thead>
@@ -574,7 +424,6 @@ function displayCenterResults(results) {
                     listHtml += `<tr><td colspan="4" style="text-align: center; color: #6c757d;">현재 활성 장애 목록이 없습니다.</td></tr>`;
                 } else {
                     data.incidents.forEach(item => {
-                        // 🚨 수정된 부분: item.action이 null일 경우 빈 문자열('')을 할당합니다.
                         const actionDisplay = item.action ? `<span class="action-text">${item.action}</span>` : '';
                         const distanceValue = item.distance_display ? item.distance_display.replace('km', '').trim() : 'N/A';
 
@@ -595,10 +444,7 @@ function displayCenterResults(results) {
                 incidentList.innerHTML = listHtml;
             })
 
-   
-
             .catch(error => {
-                // 💡 최종 진단 메시지: POST 요청은 성공했더라도 GET 요청은 Ngrok 주소가 틀리면 실패합니다.
                 const errorMessage = error.message.includes("Unexpected token '<'") 
                                 ? "Cloudflare 주소 불일치/만료 또는 방화벽 문제" 
                                 : error.message;
@@ -629,7 +475,6 @@ function displayCenterResults(results) {
         })
         .then(response => {
             if (!response.ok) {
-                // POST 요청의 HTTP 오류 코드도 명확하게 진단
                 throw new Error(`HTTP ${response.status} (${response.statusText})`);
             }
             return response.json();
@@ -637,7 +482,6 @@ function displayCenterResults(results) {
         .then(data => {
             batchMessage.innerHTML = `<span class="status-success">✅ 성공:</span> ${data.message}`;
             batchMessage.style.display = 'block';
-            // POST 성공 후 목록 새로고침 (GET 요청 재시도)
             reloadMainList(); 
         })
         .catch(error => {
@@ -679,11 +523,10 @@ function displayCenterResults(results) {
                 document.getElementById('detailStopId').textContent = masterInfo.id;
                 document.getElementById('detailStopName').textContent = masterInfo.정류소명;
                 
-                // 💡 seoul_data 정보 표시 💡
-                // 값이 null이면 '정보 없음'으로 표시
-            document.getElementById('detailAssetKey').textContent = masterInfo["시설물키"] || '';
-            document.getElementById('detailBusinessType').textContent = masterInfo["사업유형"] || '';
-            document.getElementById('detailAssetType1').textContent = masterInfo["시설물유형.1"] || '';
+                // 시설물 세부 정보 표시
+                document.getElementById('detailAssetKey').textContent = masterInfo["시설물키"] || '';
+                document.getElementById('detailBusinessType').textContent = masterInfo["사업유형"] || '';
+                document.getElementById('detailAssetType1').textContent = masterInfo["시설물유형.1"] || '';
 
                 document.getElementById('detailAssetName').textContent = masterInfo.시설물명 || '';
                 document.getElementById('detailAssetType').textContent = masterInfo.시설물유형 || '';
@@ -698,17 +541,13 @@ function displayCenterResults(results) {
 
                
                 if (activeData) {
-                    // document.getElementById('detailCurrentStatus').innerHTML = `<span class="status-failure">${activeData.status}</span>`;
                     document.getElementById('detailTime').textContent = activeData.time;
-                    // activeData.action이 null일 경우 빈 문자열('')을 할당합니다.
-                    // placeholder가 적용되어 있으므로 빈 문자열로 두어야 문구가 나타납니다.
                     document.getElementById('actionText').value = activeData.action || '';
                     
                     btnUpdate.style.display = 'block';
                     btnDelete.style.display = 'block';
 
                 } else {
-                    // document.getElementById('detailCurrentStatus').innerHTML = '활성 목록에 없음';
                     document.getElementById('detailTime').textContent = 'N/A';
                     document.getElementById('actionText').value = ''; 
                     
@@ -841,10 +680,8 @@ function displayCenterResults(results) {
         reloadMainList();
     };
 
-// index.html 파일의 <script> 태그 내부, 기존 함수들 아래에 추가
-
 // ----------------------------------------------------
-// --- 신규: 센터 등록 처리 함수 ---
+// --- [1/3] 신규: 센터 등록 처리 함수 (submitCenterRegister) ---
 // ----------------------------------------------------
 async function submitCenterRegister() {
     const form = document.getElementById('centerRegisterForm');
@@ -895,10 +732,10 @@ async function submitCenterRegister() {
             messageDisplay.className = 'modal-message warning';
             messageDisplay.innerHTML = `⚠️ 주의: ${data.message}`;
             resultList.innerHTML = `<p style="text-align: center; color: #6c757d; padding: 15px;">${data.message}</p>`;
+            displayCenterResults([]); // 데이터가 없으면 복사 텍스트도 비우도록 호출
         }
         
     } catch (error) {
-        // 서버에서 반환한 500 오류 메시지를 명확히 표시합니다.
         messageDisplay.className = 'modal-message error';
         messageDisplay.innerHTML = `❌ 통신/처리 오류: ${error.message}`;
         messageDisplay.style.display = 'block';
@@ -907,9 +744,46 @@ async function submitCenterRegister() {
     }
 }
 
-// 처리 결과를 요청하신 테이블 형태로 표시하는 함수
+
+// ----------------------------------------------------
+// --- [2/3] 신규: CSV 처리 결과 복사 함수 (로직 개선 유지) ---
+// ----------------------------------------------------
+function copyCenterResultsToClipboard() {
+    const messageDisplay = document.getElementById('centerRegisterMessage');
+    messageDisplay.style.display = 'block';
+
+    const lines = centerResultsTextForCopy.trim().split('\n');
+    const dataCount = lines.length - 1; // 헤더(첫 줄)를 제외한 데이터 라인 수
+
+    if (dataCount <= 0) { // 데이터 라인이 0이거나 음수이면 (헤더만 있거나 비어있으면)
+        messageDisplay.className = 'modal-message warning';
+        messageDisplay.innerHTML = `⚠️ 주의: 복사할 내용이 없습니다. CSV 파일을 먼저 처리하거나 (장애) 데이터가 있는지 확인해주세요.`;
+        return; 
+    }
+
+    // 전역 변수에 저장된 텍스트를 클립보드에 복사
+    navigator.clipboard.writeText(centerResultsTextForCopy)
+        .then(() => {
+            messageDisplay.className = 'modal-message status-success';
+            messageDisplay.innerHTML = `✅ 성공: 총 ${dataCount}건의 결과가 클립보드에 복사되었습니다.`;
+            setTimeout(() => messageDisplay.style.display = 'none', 2000);
+        })
+        .catch(err => {
+            messageDisplay.className = 'modal-message error';
+            messageDisplay.innerHTML = `❌ 복사 오류: 클립보드 접근 권한이 없거나 브라우저에서 지원하지 않습니다.`;
+            console.error('클립보드 복사 실패:', err);
+        });
+}
+
+
+// ----------------------------------------------------
+// --- [3/3] 통합: displayCenterResults 함수 (복사 텍스트 생성 로직 포함) ---
+// ----------------------------------------------------
 function displayCenterResults(results) {
     const resultList = document.getElementById('centerResultList');
+    
+    // ⭐⭐ 필수 로직: 복사할 텍스트 초기화 및 헤더 설정
+    centerResultsTextForCopy = "종 류\t정류장ID\t장애발생시각\n"; 
     
     let tableHtml = `
         <table class="incident-table small-text">
@@ -923,67 +797,33 @@ function displayCenterResults(results) {
             <tbody>
     `;
     
-    results.forEach(item => {
-        // [종류] 글씨 강조
-        const type_tag = item.type.replace(/\[|\]/g, ''); // 괄호 제거
-        let tag_class = '';
-        if (type_tag === '독립') tag_class = 'status-danger'; 
-        else if (type_tag === '알뜰') tag_class = 'status-warning'; 
-        else if (type_tag === '미니') tag_class = 'status-success'; 
-        
-        tableHtml += `
-            <tr>
-                <td><span class="${tag_class}" style="padding: 2px 5px; border-radius: 3px;">${item.type}</span></td>
-                <td>${item.ars_id}</td>
-                <td>${item.time}</td>
-            </tr>
-        `;
-    });
-    
-    tableHtml += `</tbody></table>`;
-    resultList.innerHTML = tableHtml;
-}
-
-
-// 처리 결과를 요청하신 테이블 형태로 표시하는 함수
-function displayCenterResults(results) {
-    const resultList = document.getElementById('centerResultList');
-    
-    let tableHtml = `
-        <table class="incident-table small-text">
-            <thead>
+    if (results.length === 0) {
+        // ⭐⭐ 필수 로직: 결과가 없으면 복사할 내용도 빈 문자열로 리셋
+        centerResultsTextForCopy = ''; 
+        tableHtml += `<tr><td colspan="3" style="text-align: center; color: #6c757d; padding: 15px;">파일에서 장애 데이터가 발견되지 않았습니다.</td></tr>`;
+    } else {
+        results.forEach(item => {
+            const type_tag = item.type.replace(/\[|\]/g, ''); 
+            let tag_class = '';
+            if (type_tag === '독립') tag_class = 'status-danger'; 
+            else if (type_tag === '알뜰') tag_class = 'status-warning'; 
+            else if (type_tag === '미니') tag_class = 'status-success'; 
+            
+            tableHtml += `
                 <tr>
-                    <th style="width: 25%;">종 류</th>
-                    <th style="width: 35%;">정류장ID</th>
-                    <th style="width: 40%;">장애발생시각</th>
+                    <td><span class="${tag_class}" style="padding: 2px 5px; border-radius: 3px;">${item.type}</span></td>
+                    <td>${item.ars_id}</td>
+                    <td>${item.time}</td>
                 </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    results.forEach(item => {
-        // [종류] 글씨 강조
-        const type_tag = item.type.replace(/\[|\]/g, ''); // 괄호 제거
-        let tag_class = '';
-        if (type_tag === '독립') tag_class = 'status-danger'; 
-        else if (type_tag === '알뜰') tag_class = 'status-warning'; 
-        else if (type_tag === '미니') tag_class = 'status-success'; 
-        
-        tableHtml += `
-            <tr>
-                <td><span class="${tag_class}" style="padding: 2px 5px; border-radius: 3px;">${item.type}</span></td>
-                <td>${item.ars_id}</td>
-                <td>${item.time}</td>
-            </tr>
-        `;
-    });
+            `;
+            // ⭐⭐ 필수 로직: 복사할 텍스트 본문 추가 (탭(\t)으로 구분)
+            centerResultsTextForCopy += `${item.type}\t${item.ars_id}\t${item.time}\n`;
+        });
+    }
     
     tableHtml += `</tbody></table>`;
     resultList.innerHTML = tableHtml;
 }
-
-// ... (기존 window.onload, reloadMainList 등 함수 유지) ...
-
 
 </script>
 
