@@ -205,6 +205,39 @@ body {
         .error { color: #dc3545; font-weight: bold; }
         .history-item { padding: 8px; border-bottom: 1px dashed #eee; font-size: 0.9em; }
         .history-item:last-child { border-bottom: none; }
+
+/* 신규: 센터 등록 모달을 위한 추가 스타일 */
+.large-modal {
+    width: 90%; /* 모달 폭 넓히기 */
+    max-width: 800px;
+}
+.file-input-group {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.file-input-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #004085;
+}
+.incident-table-container {
+    max-height: 400px; /* 결과 목록 스크롤 가능하도록 높이 제한 */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0;
+}
+.incident-table.small-text {
+    font-size: 0.9em;
+    width: 100%;
+    margin: 0;
+}
+
+
+
     </style>
 </head>
 <body>
@@ -228,6 +261,7 @@ body {
             <button class="btn btn-secondary btn-bottom" onclick="reloadMainList()">🔄새로고침</button>
             <button class="btn btn-primary btn-bottom" onclick="openModal('batchModal')">1. 일괄 등록</button>
             <button class="btn btn-primary btn-bottom" onclick="openModal('manualModal')">2. 건별 등록</button>
+            <button onclick="openModal('centerRegisterModal')">3. 센터등록</button>
         </div>
     </div>
 
@@ -295,7 +329,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://consent-looksmart-asp-grass.trycloudflare.com'; 
+    const API_BASE_URL = 'https://needed-syntax-text-loads.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
@@ -658,7 +692,151 @@ body {
     window.onload = function() {
         reloadMainList();
     };
+
+// index.html 파일의 <script> 태그 내부, 기존 함수들 아래에 추가
+
+// ----------------------------------------------------
+// --- 신규: 센터 등록 처리 함수 ---
+// ----------------------------------------------------
+async function submitCenterRegister() {
+    const form = document.getElementById('centerRegisterForm');
+    const messageDisplay = document.getElementById('centerRegisterMessage');
+    const resultList = document.getElementById('centerResultList');
+    
+    messageDisplay.style.display = 'none';
+    messageDisplay.className = 'modal-message';
+    resultList.innerHTML = `<p style="text-align: center; color: #6c757d; padding: 15px;">... 파일 처리 중 ...</p>`;
+
+    const formData = new FormData(form);
+    let fileCount = 0;
+    
+    // 선택된 파일이 있는지 확인
+    for (const [key, value] of formData.entries()) {
+        if (value instanceof File && value.size > 0) {
+            fileCount++;
+        }
+    }
+    
+    if (fileCount === 0) {
+        messageDisplay.className = 'modal-message error';
+        messageDisplay.innerHTML = `❌ 오류: 처리할 CSV 파일을 하나 이상 선택해야 합니다.`;
+        messageDisplay.style.display = 'block';
+        resultList.innerHTML = `<p style="text-align: center; color: #6c757d; padding: 15px;">파일 처리 후 결과가 여기에 표시됩니다.</p>`;
+        return;
+    }
+
+    try {
+        const response = await fetch(API_BASE_URL + '/center_register', {
+            method: 'POST',
+            // FormData를 사용할 때는 Content-Type 헤더를 설정하지 않아야 브라우저가 자동으로 multipart/form-data를 설정합니다.
+            body: formData 
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ message: '응답 본문 없음' }));
+            throw new Error(`HTTP ${response.status}: ${errorData.message || response.statusText}`);
+        }
+        
+        const data = await response.json();
+        messageDisplay.style.display = 'block';
+
+        if (data.data && data.data.length > 0) {
+            messageDisplay.className = 'modal-message status-success';
+            messageDisplay.innerHTML = `✅ 성공: ${data.message}`;
+            displayCenterResults(data.data);
+        } else {
+            messageDisplay.className = 'modal-message warning';
+            messageDisplay.innerHTML = `⚠️ 주의: ${data.message}`;
+            resultList.innerHTML = `<p style="text-align: center; color: #6c757d; padding: 15px;">${data.message}</p>`;
+        }
+        
+    } catch (error) {
+        messageDisplay.className = 'modal-message error';
+        messageDisplay.innerHTML = `❌ 통신/처리 오류: ${error.message}`;
+        messageDisplay.style.display = 'block';
+        resultList.innerHTML = `<p style="text-align: center; color: #dc3545; padding: 15px;">파일 처리 중 치명적인 오류가 발생했습니다.</p>`;
+        console.error("Center register error:", error);
+    }
+}
+
+// 처리 결과를 요청하신 테이블 형태로 표시하는 함수
+function displayCenterResults(results) {
+    const resultList = document.getElementById('centerResultList');
+    
+    let tableHtml = `
+        <table class="incident-table small-text">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">종 류</th>
+                    <th style="width: 35%;">정류장ID</th>
+                    <th style="width: 40%;">장애발생시각</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    results.forEach(item => {
+        // [종류] 글씨 강조
+        const type_tag = item.type.replace(/\[|\]/g, ''); // 괄호 제거
+        let tag_class = '';
+        if (type_tag === '독립') tag_class = 'status-danger'; 
+        else if (type_tag === '알뜰') tag_class = 'status-warning'; 
+        else if (type_tag === '미니') tag_class = 'status-success'; 
+        
+        tableHtml += `
+            <tr>
+                <td><span class="${tag_class}" style="padding: 2px 5px; border-radius: 3px;">${item.type}</span></td>
+                <td>${item.ars_id}</td>
+                <td>${item.time}</td>
+            </tr>
+        `;
+    });
+    
+    tableHtml += `</tbody></table>`;
+    resultList.innerHTML = tableHtml;
+}
+
+// ... (기존 window.onload, reloadMainList 등 함수 유지) ...
+
+
 </script>
+
+<div id="centerRegisterModal" class="modal">
+    <div class="modal-content large-modal"> <span class="close" onclick="closeModal('centerRegisterModal')">&times;</span>
+        <h2>센터 등록 (CSV 파일 업로드)</h2>
+        <p>각 유형별 CSV 파일을 선택하면, 파일 내 장애 항목(통신, 전원, 도어, 충격)이 있는 정류장의 목록을 확인합니다.</p>
+        
+        <form id="centerRegisterForm" enctype="multipart/form-data"> <div class="file-input-group">
+                <label for="independent_file">1. 독립형 첨부파일 (선택 사항):</label>
+                <input type="file" id="independent_file" name="independent_file" accept=".csv">
+            </div>
+            
+            <div class="file-input-group">
+                <label for="thrifty_file">2. 알뜰형 첨부파일 (선택 사항):</label>
+                <input type="file" id="thrifty_file" name="thrifty_file" accept=".csv">
+            </div>
+            
+            <div class="file-input-group">
+                <label for="mini_file">3. 미니형 첨부파일 (선택 사항):</label>
+                <input type="file" id="mini_file" name="mini_file" accept=".csv">
+            </div>
+            
+            <div id="centerRegisterMessage" class="modal-message"></div>
+            
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" onclick="submitCenterRegister()">CSV 파일 처리</button>
+            </div>
+        </form>
+        
+        <div id="centerResultDisplay" style="margin-top: 20px;">
+            <h3>처리 결과 목록</h3>
+            <div id="centerResultList" class="incident-table-container">
+                <p style="color: #6c757d;">파일 처리 후 결과가 여기에 표시됩니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 </body>
 </html>
