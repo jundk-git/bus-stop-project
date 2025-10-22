@@ -3,41 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚌 it's seoul ...</title>
+    <title>?�� it's seoul ...</title>
     <style>
-        /* 기본 스타일 및 컨테이너 */
+        /* 기본 ?��???�?컨테?�너 */
 
 
-/* index.html 파일의 <style> 태그 내부 */
+/* index.html ?�일??<style> ?�그 ?��? */
 
 .asset-key-highlight { 
-    color: #004085; /* 진한 파란색 글씨 */ 
-    font-weight: 900; /* 매우 두껍게 강조 */
-    font-size: 1.0em; /* 주변 텍스트보다 살짝 크게 */
-    background-color: #cce5ff; /* 연한 파란색 배경 */
-    padding: 2px 5px; /* 내부 여백 */
-    border-radius: 3px; /* 모서리 둥글게 */
-    display: inline-block; /* 텍스트 너비만큼만 배경 적용 */
+    color: #004085; /* 진한 ?��???글??*/ 
+    font-weight: 900; /* 매우 ?�껍�?강조 */
+    font-size: 1.0em; /* 주�? ?�스?�보???�짝 ?�게 */
+    background-color: #cce5ff; /* ?�한 ?��???배경 */
+    padding: 2px 5px; /* ?��? ?�백 */
+    border-radius: 3px; /* 모서�??��?�?*/
+    display: inline-block; /* ?�스???�비만큼�?배경 ?�용 */
 }
 
-/* 기본 스타일 및 컨테이너 */
+/* 기본 ?��???�?컨테?�너 */
 body { 
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif;
     line-height: 1.6; 
-    padding: 0; /* ⬅️ body의 기본 padding을 0으로 설정 */
-    margin: 0; /* ⬅️ body의 기본 margin을 0으로 설정 */
+    padding: 0; /* ⬅️ body??기본 padding??0?�로 ?�정 */
+    margin: 0; /* ⬅️ body??기본 margin??0?�로 ?�정 */
     background-color: #f4f7f9; 
 }
 .main-container { 
-    /* 1. max-width 제거: 최대 너비 제한 해제 */
+    /* 1. max-width ?�거: 최�? ?�비 ?�한 ?�제 */
     max-width: 100%; 
-    /* 2. 중앙 정렬 및 여백 제거 */
-    margin: 0; /* ⬅️ 중앙 정렬 제거 */
-    /* 3. 내부 여백은 유지하거나 줄일 수 있습니다. (요청에 따라 0으로 변경) */
-    padding: 1rem 1rem; /* ⬅️ 좌우 패딩을 줄이거나 제거 */
+    /* 2. 중앙 ?�렬 �??�백 ?�거 */
+    margin: 0; /* ⬅️ 중앙 ?�렬 ?�거 */
+    /* 3. ?��? ?�백?� ?��??�거??줄일 ???�습?�다. (?�청???�라 0?�로 변�? */
+    padding: 1rem 1rem; /* ⬅️ 좌우 ?�딩??줄이거나 ?�거 */
     
     background: white; 
-    /* 전체 화면을 꽉 채울 때는 테두리나 그림자가 부자연스러울 수 있어 제거/조정하는 것이 일반적입니다. */
+    /* ?�체 ?�면??�?채울 ?�는 ?�두리나 그림?��? 부?�연?�러?????�어 ?�거/조정?�는 것이 ?�반?�입?�다. */
     border-radius: 0; 
     box-shadow: none; 
 }
@@ -54,7 +54,7 @@ body {
             box-sizing: border-box;
         }
         
-        /* 버튼 스타일 */
+        /* 버튼 ?��???*/
         .btn-group { margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end; }
         .btn {
             padding: 10px 18px;
@@ -81,7 +81,7 @@ body {
         .btn-success { background-color: #28a745; color: white; }
         .btn-success:hover { background-color: #1e7e34; }
         
-        /* 테이블 스타일 */
+        /* ?�이�??��???*/
         .incident-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
         .incident-table th, .incident-table td {
             padding: 1px 5px; 
@@ -94,12 +94,12 @@ body {
             background-color: #e9ecef;
             font-weight: 600;
             color: #495057;
-            font-size: 0.8em; /* ⭐ 추가: 헤더 글꼴 크기 압축 */
+            font-size: 0.8em; /* �?추�?: ?�더 글�??�기 ?�축 */
         }
         .incident-table td {
       
             color: #000; 
-            font-size: 0.8em; /* ⭐ 추가: 본문 글꼴 크기 압축 */
+            font-size: 0.8em; /* �?추�?: 본문 글�??�기 ?�축 */
         }
 
         .incident-table tbody tr:hover {
@@ -107,27 +107,27 @@ body {
             cursor: pointer;
         }
 
-        /* 상태 표시 */
+        /* ?�태 ?�시 */
         .status-success { color: #28a745; font-weight: bold; } 
         .status-failure { color: #dc3545; font-weight: bold; } 
         .status-offline { color: #ffc107; font-weight: bold; } 
         .status-pending { color: #6c757d; } 
-        .status-info { background-color: #f8f9fa; padding: 0 15px; /* ⬅️ 상하 패딩을 0으로 제거 */ 
-        /* 🚨🚨🚨 사용자 요청 사항 삽입 지점 🚨🚨🚨 */
+        .status-info { background-color: #f8f9fa; padding: 0 15px; /* ⬅️ ?�하 ?�딩??0?�로 ?�거 */ 
+        /* ?��?��?�� ?�용???�청 ?�항 ?�입 지???��?��?�� */
         .status-info p { 
             margin: 0; 
         }
 
-         border-radius: 8px; margin-bottom: 5px; /* 하단 마진 유지 */ border: 1px solid #eee; }
+         border-radius: 8px; margin-bottom: 5px; /* ?�단 마진 ?��? */ border: 1px solid #eee; }
 
-        /* 기준 정류장 정보 */
+        /* 기�? ?�류???�보 */
         # standardInfo { 
-             font-size: 1.0rem; margin: 0; /* ⬅️ 상하 마진 모두 0으로 제거 */  
-             padding: 0 15px; /* ⬅️ 상하 패딩을 5px에서 3px로 축소 */ 
+             font-size: 1.0rem; margin: 0; /* ⬅️ ?�하 마진 모두 0?�로 ?�거 */  
+             padding: 0 15px; /* ⬅️ ?�하 ?�딩??5px?�서 3px�?축소 */ 
              border: 1px solid #007bff; border-radius: 0; background-color: #e6f2ff;
 
   
-    /* ⭐ 추가: 타이틀을 한 줄로 강제하고 넘치는 텍스트는 숨김 */
+    /* �?추�?: ?�?��?????줄로 강제?�고 ?�치???�스?�는 ?��? */
     white-space: nowrap; 
     overflow: hidden; 
     text-overflow: ellipsis; 
@@ -137,7 +137,7 @@ body {
         #standardInfo .location-success { color: #007bff; font-weight: bold; }
         #standardTitle { 
                   
-    /* ⭐ 추가: 글꼴 크기 압축 및 줄 바꿈 방지 */
+    /* �?추�?: 글�??�기 ?�축 �?�?바꿈 방�? */
     font-size: 0.9em; 
     white-space: nowrap;
     overflow: hidden; 
@@ -145,22 +145,22 @@ body {
 
                            } 
 
-        /* 목록의 일반 글자색 */
+        /* 목록???�반 글?�색 */
         .incident-text { 
             color: #000; 
             font-weight: normal; 
         }
-        /* 진행사항 파란색 */
+        /* 진행?�항 ?��???*/
         .action-text {
             color: #007bff; 
             font-weight: bold;
         }
-        /* 새로운 정류소 타입 색상 - 요청 반영 */
+        /* ?�로???�류???�???�상 - ?�청 반영 */
         .type-color { 
-        color: #0056b3; /* 진한 파랑 */ 
+        color: #0056b3; /* 진한 ?�랑 */ 
         font-weight: bold; 
         }
-        /* 모달 스타일 */
+        /* 모달 ?��???*/
         .modal {
             display: none; 
             position: fixed; 
@@ -184,10 +184,10 @@ body {
             position: relative;
         }
 
-/* 🚨 시설물 세부 정보 줄 간격 최소화 🚨 */
+/* ?�� ?�설�??��? ?�보 �?간격 최소???�� */
 .modal-content p {
-    margin: 3px 0; /* ⬅️ p 태그의 상하 마진을 3px로 최소화 */
-    line-height: 1.3; /* ⬅️ 줄의 높이 자체를 1.6에서 1.3 정도로 축소 */
+    margin: 3px 0; /* ⬅️ p ?�그???�하 마진??3px�?최소??*/
+    line-height: 1.3; /* ⬅️ 줄의 ?�이 ?�체�?1.6?�서 1.3 ?�도�?축소 */
 }
         .close {
             color: #aaa;
@@ -210,37 +210,36 @@ body {
 <body>
 
     <div class="main-container">
-        <h1>🚌 it's seoul ...</h1>
+        <h1>?�� it's seoul ...</h1>
 
         <div id="standardInfo">
-            <div id="standardTitle">로딩 중...</div>
+            <div id="standardTitle">로딩 �?..</div>
         </div>
 
         <div id="incidentList">
-            목록 로드 중...
+            목록 로드 �?..
         </div>
 
         <p style="margin-top: 20px; font-size: 0.9em; color: #6c757d;">
-            * 항목클릭 : 한번-거리, 두번-시설물 세부정보,진행사항 관리
+            * ??��?�릭 : ?�번-거리, ?�번-?�설�??��??�보,진행?�항 관�?
         </p>
         
         <div class="btn-group" style="margin-top: 25px; justify-content: flex-start;">
-            <button class="btn btn-secondary btn-bottom" onclick="reloadMainList()">🔄새로고침</button>
-            <button class="btn btn-primary btn-bottom" onclick="openModal('batchModal')">1. 일괄 등록</button>
-            <button class="btn btn-primary btn-bottom" onclick="openModal('manualModal')">2. 건별 등록</button>
-            <button class="btn btn-primary btn-bottom" onclick="openModal('centerModal')">3. 센터 등록</button>
-         </div>
+            <button class="btn btn-secondary btn-bottom" onclick="reloadMainList()">?��?�로고침</button>
+            <button class="btn btn-primary btn-bottom" onclick="openModal('batchModal')">1. ?�괄 ?�록</button>
+            <button class="btn btn-primary btn-bottom" onclick="openModal('manualModal')">2. 건별 ?�록</button>
+        </div>
     </div>
 
     <div id="batchModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('batchModal')">&times;</span>
-            <h2>장애 일괄등록</h2>
-            <p>BIT 장애공지 봇을 복사하여 붙여넣으세요.</p>
-            <textarea id="sampleText" rows="10" placeholder="예시: [종류] 02-223 09-27 10:15 / [종류] 01-118 09-27 13:00"></textarea>
+            <h2>?�애 ?�괄?�록</h2>
+            <p>BIT ?�애공�? 봇을 복사?�여 붙여?�으?�요.</p>
+            <textarea id="sampleText" rows="10" placeholder="?�시: [종류] 02-223 09-27 10:15 / [종류] 01-118 09-27 13:00"></textarea>
             <div id="batchMessage" class="modal-message"></div>
             <div class="btn-group">
-                <button class="btn btn-primary" onclick="processBatchAddition()">일괄 등록 : 복구완료건은 삭제됩니다.</button>
+                <button class="btn btn-primary" onclick="processBatchAddition()">?�괄 ?�록 : 복구?�료건�? ??��?�니??</button>
             </div>
         </div>
     </div>
@@ -249,101 +248,63 @@ body {
 <div id="detailModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('detailModal')">&times;</span>
-        <h3>상세 정보 및 진행 현황</h3>                                             
+        <h3>?�세 ?�보 �?진행 ?�황</h3>                                             
         <div class="status-info"> 
             <p><strong id="detailStopId">N/A</strong> / <strong id="detailStopName">N/A</strong> / <strong id="detailTime">N/A</strong> 
         </div>    
-        <h3 style="margin-top: 15px;">시설물 세부 정보</h3>
+        <h3 style="margin-top: 15px;">?�설�??��? ?�보</h3>
              <div class="status-info" style="font-size: 0.9em; background-color: #f0f8ff; border: 1px solid #cceeff;">
                 <p><strong id="detailAssetKey" class="asset-key-highlight">N/A</strong> / <strong id="detailBusinessType">N/A</strong>
-                <p>디스플레이: <strong id="detailAssetType1">N/A</strong>
-                <p>정류장명: <strong id="detailAssetName">N/A</strong> / 시설물유형: <strong id="detailAssetType">N/A</strong>
-                <p>통신방식: <strong id="detailCommMethod">N/A</strong> / 통신사: <strong id="detailCommType">N/A</strong>
-                <p>사업자: <strong id="detailOperator">N/A</strong> / 제조자: <strong id="detailManufacturer">N/A</strong>
-                <p>제품종류: <strong id="detailBITType">N/A</strong> / BIT사용여부: <strong id="detailBITUsage">N/A</strong> / 장애누적: <strong id="detailIncidentCount" style="color: #dc3545;">N/A</strong>
+                <p>?�스?�레?? <strong id="detailAssetType1">N/A</strong>
+                <p>?�류?�명: <strong id="detailAssetName">N/A</strong> / ?�설물유?? <strong id="detailAssetType">N/A</strong>
+                <p>?�신방식: <strong id="detailCommMethod">N/A</strong> / ?�신?? <strong id="detailCommType">N/A</strong>
+                <p>?�업?? <strong id="detailOperator">N/A</strong> / ?�조?? <strong id="detailManufacturer">N/A</strong>
+                <p>?�품종류: <strong id="detailBITType">N/A</strong> / BIT?�용?��?: <strong id="detailBITUsage">N/A</strong> / ?�애?�적: <strong id="detailIncidentCount" style="color: #dc3545;">N/A</strong>
              </div>
            
-            <h3>진행사항 관리</h3>
-            <textarea id="actionText" rows="4" placeholder="진행사항을 입력/수정하세요. 신규 등록 시에도 필수입니다."></textarea>
+            <h3>진행?�항 관�?/h3>
+            <textarea id="actionText" rows="4" placeholder="진행?�항???�력/?�정?�세?? ?�규 ?�록 ?�에???�수?�니??"></textarea>
             <div id="actionMessage" class="modal-message"></div>
             
             <div class="btn-group">
-                <button id="btnDetailUpdate" class="btn btn-primary" onclick="updateAction('UPDATE_ACTION')">진행사항 수정</button>
-                <button id="btnDetailDelete" class="btn btn-danger" onclick="deleteIncident()">조치완료 삭제</button>
+                <button id="btnDetailUpdate" class="btn btn-primary" onclick="updateAction('UPDATE_ACTION')">진행?�항 ?�정</button>
+                <button id="btnDetailDelete" class="btn btn-danger" onclick="deleteIncident()">조치?�료 ??��</button>
                 
-                <button id="btnDetailCreate" class="btn btn-success" onclick="createIncidentFromDetail()">신규 등록 (장애 활성화)</button>
+                <button id="btnDetailCreate" class="btn btn-success" onclick="createIncidentFromDetail()">?�규 ?�록 (?�애 ?�성??</button>
             </div>
 
-            <h3 style="margin-top: 20px;">히스토리</h3>
-            <div id="historyList">히스토리 없음.</div>
+            <h3 style="margin-top: 20px;">?�스?�리</h3>
+            <div id="historyList">?�스?�리 ?�음.</div>
         </div>
     </div>
     
     <div id="manualModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('manualModal')">&times;</span>
-            <h2>장애 수동 등록</h2>
-            <p>민원 및 BIT 장애공지 봇에 없는 자료를 등록합니다.</p>
-            <input type="text" id="manualStopId" placeholder="예: 02-223">
-            <textarea id="manualActionText" rows="4" placeholder="민원처리 예정등 진행사항을 입력하세요."></textarea>
+            <h2>?�애 ?�동 ?�록</h2>
+            <p>민원 �?BIT ?�애공�? 봇에 ?�는 ?�료�??�록?�니??</p>
+            <input type="text" id="manualStopId" placeholder="?? 02-223">
+            <textarea id="manualActionText" rows="4" placeholder="민원처리 ?�정??진행?�항???�력?�세??"></textarea>
             <div id="manualMessage" class="modal-message"></div>
             <div class="btn-group">
-                <button class="btn btn-success" onclick="createManualIncident()">장애 수동 등록</button>
+                <button class="btn btn-success" onclick="createManualIncident()">?�애 ?�동 ?�록</button>
             </div>
         </div>
     </div>
 
-<div id="centerModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('centerModal')">&times;</span>
-        <h2>센터 등록: 파일 업로드 및 기간 설정</h2>
-        <p>BIT 시설물 장애 정보를 업로드하고 조회 기간을 설정합니다.</p>
-        
-        <div style="margin-bottom: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
-            <p style="margin: 5px 0; font-weight: bold;">1. 유형별 첨부파일 선택 (선택 사항)</p>
-            <label for="independentFile">독립형 첨부파일:</label>
-            <input type="file" id="independentFile" name="independent_file" accept=".csv, .txt" style="margin-bottom: 5px; border: none;"><br>
-            
-            <label for="economicalFile">알뜰형 첨부파일:</label>
-            <input type="file" id="economicalFile" name="economical_file" accept=".csv, .txt" style="margin-bottom: 5px; border: none;"><br>
-            
-            <label for="miniFile">미니형 첨부파일:</label>
-            <input type="file" id="miniFile" name="mini_file" accept=".csv, .txt" style="border: none;">
-        </div>
-
-        <div style="margin-bottom: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
-            <p style="margin: 5px 0; font-weight: bold;">2. 장애 조회 기간 설정</p>
-            <label for="startDate">FROM (장애발생 최초시간):</label>
-            <input type="datetime-local" id="startDate" name="start_date">
-            <label for="endDate">TO (장애발생 최종시간):</label>
-            <input type="datetime-local" id="endDate" name="end_date">
-            <p style="font-size: 0.8em; color: #6c757d; margin: 5px 0;">* 파일을 첨부하지 않거나 기간을 비워두면 첨부된 데이터의 최소/최대 시간을 기준으로 1시간 단위로 자동 설정됩니다.</p>
-        </div>
-
-        <div id="centerMessage" class="modal-message"></div>
-        <textarea id="centerOutput" rows="10" readonly style="margin-top: 10px; font-size: 0.9em; white-space: pre; background-color: #f7f7f7;">여기에 처리 결과가 표시됩니다.</textarea>
-
-        <div class="btn-group">
-            <button class="btn btn-success" onclick="processCenterUpload()">파일 처리 및 목록 표시</button>
-        </div>
-    </div>
-</div>
-
-
-
 <script>
-    // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
-    // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://sufficient-kentucky-remains-myself.trycloudflare.com'; 
+    // ?��?��?�� NGROK 문제 ?�결! Cloudflare Tunnel 주소�?변경되?�습?�다. ?��?��?��
+    // ?�널??껐다 �??�마????주소�??�동?�로 ?�데?�트?�야 ?�니??
+    const API_BASE_URL = 'https://stud-finals-mel-improvements.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
     
-    // ⭐ 추가: 정렬 상태 변수
-    let currentSortBy = 'distance';  // 기본 정렬 기준: 'distance'
+    // �?추�?: ?�렬 ?�태 변??
+    let currentSortBy = 'distance';  // 기본 ?�렬 기�?: 'distance'
 
 
-    // 모달 제어 함수 (유지)
+    // 모달 ?�어 ?�수 (?��?)
     function openModal(modalId) {
         document.getElementById(modalId).style.display = 'block';
         if (modalId === 'batchModal') {
@@ -364,63 +325,63 @@ body {
         }
     }
 
-    // 기준 ID 설정 및 목록 새로고침
+    // 기�? ID ?�정 �?목록 ?�로고침
     function setStandardId(stopId) {
         currentStandardId = stopId;
         reloadMainList();
     }
     
-    // ⭐ 추가: 정렬 기준 전환 함수
+    // �?추�?: ?�렬 기�? ?�환 ?�수
     function toggleSort(sortBy) {
         if (currentSortBy !== sortBy) {
             currentSortBy = sortBy;
         }
-        // 서버에서 이미 내림차순/오름차순이 고정되어 있으므로 기준만 변경 후 새로고침
+        // ?�버?�서 ?��? ?�림차순/?�름차순??고정?�어 ?�으므�?기�?�?변�????�로고침
         reloadMainList();
     }
 
 
-    // 활성 장애 목록을 새로 로드하는 함수 (GET 요청)
+    // ?�성 ?�애 목록???�로 로드?�는 ?�수 (GET ?�청)
     function reloadMainList() {
         const standardTitle = document.getElementById('standardTitle');
         const incidentList = document.getElementById('incidentList');
         
-        standardTitle.innerHTML = `🔄 현황 로드 중...`; 
+        standardTitle.innerHTML = `?�� ?�황 로드 �?..`; 
 
-        // ⭐ 수정: sort_by 쿼리 매개변수를 추가하여 서버에 정렬 기준 전달
+        // �??�정: sort_by 쿼리 매개변?��? 추�??�여 ?�버???�렬 기�? ?�달
         fetch(API_BASE_URL + `/get_active_incidents?standard_id=${currentStandardId}&sort_by=${currentSortBy}`)
             .then(response => {
-                // 서버 응답 상태 확인: 404, 500 등의 오류를 명확히 진단
+                // ?�버 ?�답 ?�태 ?�인: 404, 500 ?�의 ?�류�?명확??진단
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status} (${response.statusText})`);
                 }
                 return response.json();
             })
             .then(data => {
-                // 1. 기준 정류장 정보 업데이트 및 색상 적용 (기존 로직 유지)
+                // 1. 기�? ?�류???�보 ?�데?�트 �??�상 ?�용 (기존 로직 ?��?)
                 const standardInfo = data.standard_info;
                 if (standardInfo) {
-                    let displayStopName = standardInfo.정류소명;
+                    let displayStopName = standardInfo.?�류?�명;
                     
-                    // 정류소명에 포함된 마지막 괄호 그룹(정류소 타입 정보)을 찾아 'type-color' 클래스를 적용합니다.
+                    // ?�류?�명???�함??마�?�?괄호 그룹(?�류???�???�보)??찾아 'type-color' ?�래?��? ?�용?�니??
                     displayStopName = displayStopName.replace(/(\s\([^)]+\))$/, (match, p1) => {
                         return `<span class="type-color">${p1}</span>`;
                     });
 
-                    standardTitle.innerHTML = `✅ 정류장:${displayStopName} <span class="location-success"></span>`;
+                    standardTitle.innerHTML = `???�류??${displayStopName} <span class="location-success"></span>`;
                 } else {
-                    standardTitle.innerHTML = `❌ 기준 정류장: ${currentStandardId} <span class="error">(위치 로드 실패 / DB 확인 필요)</span>`;
+                    standardTitle.innerHTML = `??기�? ?�류?? ${currentStandardId} <span class="error">(?�치 로드 ?�패 / DB ?�인 ?�요)</span>`;
                 }
                 
-                // 2. 활성 장애 목록 생성 (테이블 뷰)
+                // 2. ?�성 ?�애 목록 ?�성 (?�이�?�?
                 let listHtml = `
                     <table class="incident-table">
                         <thead>
                             <tr>
-                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('id')">정류장번호 ↓</th>
-                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('time')">발생시간 ↓</th>  
-                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('distance')">거리↓</th>
-                                <th style="width: 55%;">진행사항</th> 
+                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('id')">?�류?�번????/th>
+                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('time')">발생?�간 ??/th>  
+                                <th style="width: 15%; cursor: pointer;" onclick="toggleSort('distance')">거리??/th>
+                                <th style="width: 55%;">진행?�항</th> 
                             </tr>
                         </thead>
                         <tbody>
@@ -428,10 +389,10 @@ body {
 
 
                 if (data.incidents.length === 0) {
-                    listHtml += `<tr><td colspan="4" style="text-align: center; color: #6c757d;">현재 활성 장애 목록이 없습니다.</td></tr>`;
+                    listHtml += `<tr><td colspan="4" style="text-align: center; color: #6c757d;">?�재 ?�성 ?�애 목록???�습?�다.</td></tr>`;
                 } else {
                     data.incidents.forEach(item => {
-                        // 🚨 수정된 부분: item.action이 null일 경우 빈 문자열('')을 할당합니다.
+                        // ?�� ?�정??부�? item.action??null??경우 �?문자??'')???�당?�니??
                         const actionDisplay = item.action ? `<span class="action-text">${item.action}</span>` : '';
                         const distanceValue = item.distance_display ? item.distance_display.replace('km', '').trim() : 'N/A';
 
@@ -455,26 +416,26 @@ body {
    
 
             .catch(error => {
-                // 💡 최종 진단 메시지: POST 요청은 성공했더라도 GET 요청은 Ngrok 주소가 틀리면 실패합니다.
+                // ?�� 최종 진단 메시지: POST ?�청?� ?�공?�더?�도 GET ?�청?� Ngrok 주소가 ?�리면 ?�패?�니??
                 const errorMessage = error.message.includes("Unexpected token '<'") 
-                                ? "Cloudflare 주소 불일치/만료 또는 방화벽 문제" 
+                                ? "Cloudflare 주소 불일�?만료 ?�는 방화�?문제" 
                                 : error.message;
 
-                standardTitle.innerHTML = `❌ 서버 연결 오류 (진단: ${errorMessage})`;
-                incidentList.innerHTML = `<div style="padding: 15px; color: #dc3545;"><strong>GET 요청 실패:</strong> Cloudflare 주소와 클라이언트 주소가 일치하는지 확인하세요.</div>`;
+                standardTitle.innerHTML = `???�버 ?�결 ?�류 (진단: ${errorMessage})`;
+                incidentList.innerHTML = `<div style="padding: 15px; color: #dc3545;"><strong>GET ?�청 ?�패:</strong> Cloudflare 주소?� ?�라?�언??주소가 ?�치?�는지 ?�인?�세??</div>`;
                 console.error("Fetch error:", error);
             });
     }
 
 
-    // 일괄 등록 처리 (POST 요청)
+    // ?�괄 ?�록 처리 (POST ?�청)
     function processBatchAddition() {
         const sampleText = document.getElementById('sampleText').value;
         const batchMessage = document.getElementById('batchMessage');
         batchMessage.style.display = 'none';
         
         if (!sampleText) {
-            batchMessage.innerHTML = `<span class="error">❌ 오류:</span> 텍스트를 입력해주세요.`;
+            batchMessage.innerHTML = `<span class="error">???�류:</span> ?�스?��? ?�력?�주?�요.`;
             batchMessage.style.display = 'block';
             return;
         }
@@ -486,25 +447,25 @@ body {
         })
         .then(response => {
             if (!response.ok) {
-                // POST 요청의 HTTP 오류 코드도 명확하게 진단
+                // POST ?�청??HTTP ?�류 코드??명확?�게 진단
                 throw new Error(`HTTP ${response.status} (${response.statusText})`);
             }
             return response.json();
         })
         .then(data => {
-            batchMessage.innerHTML = `<span class="status-success">✅ 성공:</span> ${data.message}`;
+            batchMessage.innerHTML = `<span class="status-success">???�공:</span> ${data.message}`;
             batchMessage.style.display = 'block';
-            // POST 성공 후 목록 새로고침 (GET 요청 재시도)
+            // POST ?�공 ??목록 ?�로고침 (GET ?�청 ?�시??
             reloadMainList(); 
         })
         .catch(error => {
-            batchMessage.innerHTML = `<span class="error">❌ 통신 오류:</span> 서버 연결 또는 라우팅 오류가 의심됩니다. (진단: ${error.message})`;
+            batchMessage.innerHTML = `<span class="error">???�신 ?�류:</span> ?�버 ?�결 ?�는 ?�우???�류가 ?�심?�니?? (진단: ${error.message})`;
             batchMessage.style.display = 'block';
             console.error("Batch post error:", error);
         });
     }
     
-    // 상세 팝업 열기 (GET)
+    // ?�세 ?�업 ?�기 (GET)
     function showDetailModal(stopId) {
         activeStopId = stopId;
         openModal('detailModal');
@@ -534,38 +495,38 @@ body {
                 const history = data.history;
                 
                 document.getElementById('detailStopId').textContent = masterInfo.id;
-                document.getElementById('detailStopName').textContent = masterInfo.정류소명;
+                document.getElementById('detailStopName').textContent = masterInfo.?�류?�명;
                 
-                // 💡 seoul_data 정보 표시 💡
-                // 값이 null이면 '정보 없음'으로 표시
-            document.getElementById('detailAssetKey').textContent = masterInfo["시설물키"] || '';
-            document.getElementById('detailBusinessType').textContent = masterInfo["사업유형"] || '';
-            document.getElementById('detailAssetType1').textContent = masterInfo["시설물유형.1"] || '';
+                // ?�� seoul_data ?�보 ?�시 ?��
+                // 값이 null?�면 '?�보 ?�음'?�로 ?�시
+            document.getElementById('detailAssetKey').textContent = masterInfo["?�설물키"] || '';
+            document.getElementById('detailBusinessType').textContent = masterInfo["?�업?�형"] || '';
+            document.getElementById('detailAssetType1').textContent = masterInfo["?�설물유??1"] || '';
 
-                document.getElementById('detailAssetName').textContent = masterInfo.시설물명 || '';
-                document.getElementById('detailAssetType').textContent = masterInfo.시설물유형 || '';
-                document.getElementById('detailCommMethod').textContent = masterInfo.통신방식 || '';
-                document.getElementById('detailCommType').textContent = masterInfo.통신사_유형 || '';
-                document.getElementById('detailOperator').textContent = masterInfo.사업자_이름 || '';
-                document.getElementById('detailManufacturer').textContent = masterInfo.제조자 || '';
-                document.getElementById('detailBITType').textContent = masterInfo.BIT제품종류 || '';
-                document.getElementById('detailBITUsage').textContent = masterInfo.BIT사용여부 || '';
-                document.getElementById('detailIncidentCount').textContent = masterInfo.장애건수 !== null ? masterInfo.장애건수 : '';
+                document.getElementById('detailAssetName').textContent = masterInfo.?�설물명 || '';
+                document.getElementById('detailAssetType').textContent = masterInfo.?�설물유??|| '';
+                document.getElementById('detailCommMethod').textContent = masterInfo.?�신방식 || '';
+                document.getElementById('detailCommType').textContent = masterInfo.?�신???�형 || '';
+                document.getElementById('detailOperator').textContent = masterInfo.?�업???�름 || '';
+                document.getElementById('detailManufacturer').textContent = masterInfo.?�조??|| '';
+                document.getElementById('detailBITType').textContent = masterInfo.BIT?�품종류 || '';
+                document.getElementById('detailBITUsage').textContent = masterInfo.BIT?�용?��? || '';
+                document.getElementById('detailIncidentCount').textContent = masterInfo.?�애건수 !== null ? masterInfo.?�애건수 : '';
 
 
                
                 if (activeData) {
                     // document.getElementById('detailCurrentStatus').innerHTML = `<span class="status-failure">${activeData.status}</span>`;
                     document.getElementById('detailTime').textContent = activeData.time;
-                    // activeData.action이 null일 경우 빈 문자열('')을 할당합니다.
-                    // placeholder가 적용되어 있으므로 빈 문자열로 두어야 문구가 나타납니다.
+                    // activeData.action??null??경우 �?문자??'')???�당?�니??
+                    // placeholder가 ?�용?�어 ?�으므�?�?문자?�로 ?�어??문구가 ?��??�니??
                     document.getElementById('actionText').value = activeData.action || '';
                     
                     btnUpdate.style.display = 'block';
                     btnDelete.style.display = 'block';
 
                 } else {
-                    // document.getElementById('detailCurrentStatus').innerHTML = '활성 목록에 없음';
+                    // document.getElementById('detailCurrentStatus').innerHTML = '?�성 목록???�음';
                     document.getElementById('detailTime').textContent = 'N/A';
                     document.getElementById('actionText').value = ''; 
                     
@@ -579,30 +540,30 @@ body {
                         const statusClass = h.status === 'COMPLETED' ? 'status-success' : 'status-pending';
                         historyList.innerHTML += `
                             <div class="history-item">
-                                [${h.time}] <span class="${statusClass}">${h.status}</span> - ${h.action || '진행사항 기록 없음'}
+                                [${h.time}] <span class="${statusClass}">${h.status}</span> - ${h.action || '진행?�항 기록 ?�음'}
                             </div>
                         `;
                     });
                 } else {
-                    historyList.textContent = '기록된 히스토리가 없습니다.';
+                    historyList.textContent = '기록???�스?�리가 ?�습?�다.';
                 }
 
             })
             .catch(error => {
-                alert(`상세 정보 로드 중 오류 발생: ${error.message}`);
+                alert(`?�세 ?�보 로드 �??�류 발생: ${error.message}`);
                 closeModal('detailModal');
                 console.error("Detail fetch error:", error);
             });
     }
 
-    // 진행사항 저장/삭제/신규 (POST)
+    // 진행?�항 ?�????��/?�규 (POST)
     async function updateAction(actionType) {
         const actionText = document.getElementById('actionText').value;
         const actionMessage = document.getElementById('actionMessage');
         actionMessage.style.display = 'none';
         
         if (!actionText) {
-            actionMessage.innerHTML = `<span class="error">❌ 오류:</span> ${actionType === 'DELETE' ? '삭제' : actionType === 'CREATE' ? '신규 등록' : '수정'} 시 진행사항을 반드시 입력해야 합니다.`;
+            actionMessage.innerHTML = `<span class="error">???�류:</span> ${actionType === 'DELETE' ? '??��' : actionType === 'CREATE' ? '?�규 ?�록' : '?�정'} ??진행?�항??반드???�력?�야 ?�니??`;
             actionMessage.style.display = 'block';
             return;
         }
@@ -621,7 +582,7 @@ body {
             const data = await response.json();
 
             actionMessage.style.display = 'block';
-            actionMessage.innerHTML = `<span class="status-success">✅ 성공:</span> ${data.message}`;
+            actionMessage.innerHTML = `<span class="status-success">???�공:</span> ${data.message}`;
             reloadMainList(); 
             if (actionType === 'DELETE' || actionType === 'CREATE') {
                 setTimeout(() => closeModal('detailModal'), 1000); 
@@ -630,26 +591,26 @@ body {
                 showDetailModal(activeStopId); 
             }
         } catch (error) {
-            actionMessage.innerHTML = `<span class="error">❌ 통신 오류:</span> 서버 연결 또는 라우팅 오류가 의심됩니다. (진단: ${error.message})`;
+            actionMessage.innerHTML = `<span class="error">???�신 ?�류:</span> ?�버 ?�결 ?�는 ?�우???�류가 ?�심?�니?? (진단: ${error.message})`;
             console.error("Action post error:", error);
         }
     }
 
-    // [삭제] 래퍼 함수 (활성 상태에서 조치 완료)
+    // [??��] ?�퍼 ?�수 (?�성 ?�태?�서 조치 ?�료)
     function deleteIncident() { 
-        if(confirm(`정류장 ID ${activeStopId}를 활성 목록에서 삭제하고 조치 완료 상태로 히스토리에 기록하시겠습니까?`)) {
+        if(confirm(`?�류??ID ${activeStopId}�??�성 목록?�서 ??��?�고 조치 ?�료 ?�태�??�스?�리??기록?�시겠습?�까?`)) {
             updateAction('DELETE'); 
         }
     }
     
-    // [신규 등록] 래퍼 함수 (비활성 상태에서 활성화)
+    // [?�규 ?�록] ?�퍼 ?�수 (비활???�태?�서 ?�성??
     function createIncidentFromDetail() { 
-        if(confirm(`정류장 ID ${activeStopId}를 활성 장애로 신규 등록하시겠습니까?`)) {
+        if(confirm(`?�류??ID ${activeStopId}�??�성 ?�애�??�규 ?�록?�시겠습?�까?`)) {
             updateAction('CREATE'); 
         }
     }
     
-    // 수동 등록 처리 (POST)
+    // ?�동 ?�록 처리 (POST)
     function createManualIncident() { 
         const manualStopId = document.getElementById('manualStopId').value.trim();
         const manualActionText = document.getElementById('manualActionText').value;
@@ -657,12 +618,12 @@ body {
         manualMessage.style.display = 'none';
 
         if (!manualStopId || !manualActionText) {
-            manualMessage.innerHTML = `<span class="error">❌ 오류:</span> 정류장 ID와 진행사항을 모두 입력해야 합니다.`;
+            manualMessage.innerHTML = `<span class="error">???�류:</span> ?�류??ID?� 진행?�항??모두 ?�력?�야 ?�니??`;
             manualMessage.style.display = 'block';
             return;
         }
         
-        if(confirm(`정류장 ID ${manualStopId}를 활성 장애로 수동 추가하시겠습니까? 진행사항이 함께 저장됩니다.`)) {
+        if(confirm(`?�류??ID ${manualStopId}�??�성 ?�애�??�동 추�??�시겠습?�까? 진행?�항???�께 ?�?�됩?�다.`)) {
             fetch(API_BASE_URL + `/incident_details/${manualStopId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -676,109 +637,24 @@ body {
             })
             .then(data => {
                 manualMessage.style.display = 'block';
-                if (data.message.includes('성공')) {
-                    manualMessage.innerHTML = `<span class="status-success">✅ 성공:</span> ${data.message}`;
+                if (data.message.includes('?�공')) {
+                    manualMessage.innerHTML = `<span class="status-success">???�공:</span> ${data.message}`;
                     reloadMainList();
                     setTimeout(() => closeModal('manualModal'), 1000);
                 } else {
-                    manualMessage.innerHTML = `<span class="error">❌ 실패:</span> ${data.message || '서버 오류'}`;
+                    manualMessage.innerHTML = `<span class="error">???�패:</span> ${data.message || '?�버 ?�류'}`;
                 }
             })
             .catch(error => {
-                manualMessage.innerHTML = `<span class="error">❌ 통신 오류:</span> 서버 연결 또는 Cloudflare 주소 불일치가 의심됩니다.`;
+                manualMessage.innerHTML = `<span class="error">???�신 ?�류:</span> ?�버 ?�결 ?�는 Cloudflare 주소 불일치�? ?�심?�니??`;
                 manualMessage.style.display = 'block';
                 console.error("Manual create error:", error);
             });
         }
     }
 
-  // ... 기존 JavaScript 코드 (reloadMainList, openModal, closeModal 등) ...
 
-    function processCenterUpload() {
-        const centerMessage = document.getElementById('centerMessage');
-        const centerOutput = document.getElementById('centerOutput');
-        
-        centerMessage.style.display = 'none';
-        centerOutput.value = '파일 처리 중... 잠시 기다려 주세요.';
-
-        const independentFile = document.getElementById('independentFile').files[0];
-        const economicalFile = document.getElementById('economicalFile').files[0];
-        const miniFile = document.getElementById('miniFile').files[0];
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        
-        // 폼 데이터 객체 생성 (파일 및 기간 데이터 포함)
-        const formData = new FormData();
-        if (independentFile) {
-            formData.append('independent_file', independentFile);
-        }
-        if (economicalFile) {
-            formData.append('economical_file', economicalFile);
-        }
-        if (miniFile) {
-            formData.append('mini_file', miniFile);
-        }
-        if (startDate) {
-            formData.append('start_date', startDate);
-        }
-        if (endDate) {
-            formData.append('end_date', endDate);
-        }
-
-        if (formData.entries().next().done) {
-             centerMessage.innerHTML = `<span class=\"error\">❌ 오류:</span> 업로드할 파일을 하나 이상 선택하거나 조회 기간을 입력하세요.`;
-             centerMessage.style.display = 'block';
-             centerOutput.value = '파일 또는 기간이 선택되지 않았습니다.';
-             return;
-        }
-
-        fetch(API_BASE_URL + '/process_center_upload', {
-            method: 'POST',
-            // FormData 사용 시 Content-Type 헤더를 명시적으로 설정하지 않습니다.
-            body: formData 
-        })
-        .then(response => {
-            // HTTP 404 오류를 포함한 모든 통신 오류 처리
-            if (!response.ok) {
-                return response.text().then(text => {
-                     // 서버에서 JSON이 아닌 HTML(Flask의 404 페이지 등)을 반환할 수 있으므로, 텍스트로 읽어 오류 메시지를 구성
-                     throw new Error(`HTTP ${response.status} (${response.statusText})`);
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.error) {
-                centerMessage.innerHTML = `<span class=\"error\">❌ 서버 오류:</span> ${data.error}<br>세부 메시지: ${data.details || '없음'}`;
-                centerMessage.style.display = 'block';
-            } else {
-                // 기간 정보를 포함하여 메시지 표시
-                centerMessage.innerHTML = `<span class=\"status-success\">✅ 성공:</span> **기간:** ${data.period || '자동 설정됨'} <br>총 ${data.total_processed_count}건 중 분당 5건 초과 ${data.excluded_count}건 제외. **${data.final_count}건** 표시.`;
-                centerMessage.style.display = 'block';
-                
-                // 결과 포맷팅
-                let output = "종 류  정류장ID  장애발생시각\n";
-                output += "--------------------------------------\n";
-                data.final_list.forEach(item => {
-                    // 항목의 길이 조절: [독립]은 5자, [알뜰]은 4자 이므로 padEnd(5) 사용
-                    output += `${item.type.padEnd(5)}  ${item.ars_id.padEnd(8)}  ${item.time}\n`;
-                });
-                
-                centerOutput.value = output;
-            }
-        })
-        .catch(error => {
-            // 사용자에게 발생한 404 오류 메시지를 포함한 최종 진단 메시지
-            centerMessage.innerHTML = `<span class=\"error\">❌ 통신 오류:</span> 서버 연결 또는 **Cloudflare 주소 불일치** 또는 **서버 라우트(Endpoint) 미추가**. (진단: ${error.message})`;
-            centerMessage.style.display = 'block';
-            centerOutput.value = `통신 오류: ${error.message}\n\n**해결 방법:**\n1. flask_server.py에 /process_center_upload 라우트 코드를 추가했는지 확인해주세요.\n2. Cloudflare 주소가 정확한지 확인해주세요.`;
-            console.error("Center upload error:", error);
-        });
-    }
-
-// ... 나머지 JavaScript 코드 ...
-
-    // 페이지 로드 시 초기 기준 ID로 현황 데이터를 바로 표시
+    // ?�이지 로드 ??초기 기�? ID�??�황 ?�이?��? 바로 ?�시
     window.onload = function() {
         reloadMainList();
     };
