@@ -777,12 +777,12 @@ function copyCenterResultsToClipboard() {
 
 
 // ----------------------------------------------------
-// --- [3/3] 통합: displayCenterResults 함수 (복사 텍스트 생성 로직 포함) ---
+// --- [3/3] 통합: displayCenterResults 함수 (복사 포맷 수정) ---
 // ----------------------------------------------------
 function displayCenterResults(results) {
     const resultList = document.getElementById('centerResultList');
     
-    // ⭐⭐ 필수 로직: 복사할 텍스트 초기화 및 헤더 설정
+    // ⭐⭐ 수정 및 확인: 복사할 텍스트 초기화 및 헤더 설정 시 탭(\t) 사용
     centerResultsTextForCopy = "종 류\t정류장ID\t장애발생시각\n"; 
     
     let tableHtml = `
@@ -798,7 +798,7 @@ function displayCenterResults(results) {
     `;
     
     if (results.length === 0) {
-        // ⭐⭐ 필수 로직: 결과가 없으면 복사할 내용도 빈 문자열로 리셋
+        // 결과가 없으면 복사할 내용도 빈 문자열로 리셋
         centerResultsTextForCopy = ''; 
         tableHtml += `<tr><td colspan="3" style="text-align: center; color: #6c757d; padding: 15px;">파일에서 장애 데이터가 발견되지 않았습니다.</td></tr>`;
     } else {
@@ -816,7 +816,7 @@ function displayCenterResults(results) {
                     <td>${item.time}</td>
                 </tr>
             `;
-            // ⭐⭐ 필수 로직: 복사할 텍스트 본문 추가 (탭(\t)으로 구분)
+            // ⭐⭐ 수정 및 확인: 복사할 텍스트 본문 추가 시 탭(\t)을 명확히 사용하여 포맷팅
             centerResultsTextForCopy += `${item.type}\t${item.ars_id}\t${item.time}\n`;
         });
     }
@@ -824,7 +824,6 @@ function displayCenterResults(results) {
     tableHtml += `</tbody></table>`;
     resultList.innerHTML = tableHtml;
 }
-
 </script>
 
 <div id="centerRegisterModal" class="modal">
