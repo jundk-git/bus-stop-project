@@ -207,6 +207,7 @@ body {
         .history-item:last-child { border-bottom: none; }
 
 /* 신규: 센터 등록 모달을 위한 추가 스타일 */
+/* 신규: 센터 등록 모달을 위한 추가 스타일 */
 .large-modal {
     width: 90%; /* 모달 폭 넓히기 */
     max-width: 800px;
@@ -235,7 +236,10 @@ body {
     width: 100%;
     margin: 0;
 }
-
+/* 센터 등록 결과 종류 색상 강조 */
+.status-danger { background-color: #f8d7da; color: #721c24; } /* 독립: 빨강 계열 */
+.status-warning { background-color: #fff3cd; color: #856404; } /* 알뜰: 노랑 계열 */
+.status-success { background-color: #d4edda; color: #155724; } /* 미니: 초록 계열 */
 
 
     </style>
@@ -329,7 +333,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://needed-syntax-text-loads.trycloudflare.com'; 
+    const API_BASE_URL = 'https://regional-discussed-unsigned-planners.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
@@ -728,7 +732,6 @@ async function submitCenterRegister() {
     try {
         const response = await fetch(API_BASE_URL + '/center_register', {
             method: 'POST',
-            // FormData를 사용할 때는 Content-Type 헤더를 설정하지 않아야 브라우저가 자동으로 multipart/form-data를 설정합니다.
             body: formData 
         });
 
@@ -751,13 +754,52 @@ async function submitCenterRegister() {
         }
         
     } catch (error) {
+        // 서버에서 반환한 500 오류 메시지를 명확히 표시합니다.
         messageDisplay.className = 'modal-message error';
         messageDisplay.innerHTML = `❌ 통신/처리 오류: ${error.message}`;
         messageDisplay.style.display = 'block';
-        resultList.innerHTML = `<p style="text-align: center; color: #dc3545; padding: 15px;">파일 처리 중 치명적인 오류가 발생했습니다.</p>`;
+        resultList.innerHTML = `<p style="text-align: center; color: #dc3545; padding: 15px;">파일 처리 중 치명적인 오류가 발생했습니다. (CSV 인코딩 확인 필요)</p>`;
         console.error("Center register error:", error);
     }
 }
+
+// 처리 결과를 요청하신 테이블 형태로 표시하는 함수
+function displayCenterResults(results) {
+    const resultList = document.getElementById('centerResultList');
+    
+    let tableHtml = `
+        <table class="incident-table small-text">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">종 류</th>
+                    <th style="width: 35%;">정류장ID</th>
+                    <th style="width: 40%;">장애발생시각</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    results.forEach(item => {
+        // [종류] 글씨 강조
+        const type_tag = item.type.replace(/\[|\]/g, ''); // 괄호 제거
+        let tag_class = '';
+        if (type_tag === '독립') tag_class = 'status-danger'; 
+        else if (type_tag === '알뜰') tag_class = 'status-warning'; 
+        else if (type_tag === '미니') tag_class = 'status-success'; 
+        
+        tableHtml += `
+            <tr>
+                <td><span class="${tag_class}" style="padding: 2px 5px; border-radius: 3px;">${item.type}</span></td>
+                <td>${item.ars_id}</td>
+                <td>${item.time}</td>
+            </tr>
+        `;
+    });
+    
+    tableHtml += `</tbody></table>`;
+    resultList.innerHTML = tableHtml;
+}
+
 
 // 처리 결과를 요청하신 테이블 형태로 표시하는 함수
 function displayCenterResults(results) {
@@ -807,6 +849,49 @@ function displayCenterResults(results) {
         <p>각 유형별 CSV 파일을 선택하면, 파일 내 장애 항목(통신, 전원, 도어, 충격)이 있는 정류장의 목록을 확인합니다.</p>
         
         <form id="centerRegisterForm" enctype="multipart/form-data"> <div class="file-input-group">
+                <label for="independent_file">1. 독립형 첨부파일 (선택 사항):</label>
+                <input type="file" id="independent_file" name="independent_file" accept=".csv">
+            </div>
+            
+            <div class="file-input-group">
+                <label for="thrifty_file">2. 알뜰형 첨부파일 (선택 사항):</label>
+                <input type="file" id="thrifty_file" name="thrifty_file" accept=".csv">
+            </div>
+            
+            <div class="file-input-group">
+                <label for="mini_file">3. 미니형 첨부파일 (선택 사항):</label>
+                <input type="file" id="mini_file" name="mini_file" accept=".csv">
+            </div>
+            
+            <div id="centerRegisterMessage" class="modal-message"></div>
+            
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" onclick="submitCenterRegister()">CSV 파일 처리</button>
+            </div>
+        </form>
+        
+        <div id="centerResultDisplay" style="margin-top: 20px;">
+            <h3>처리 결과 목록</h3>
+            <div id="centerResultList" class="incident-table-container">
+                <p style="color: #6c757d;">파일 처리 후 결과가 여기에 표시됩니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="header-menu">
+    <button onclick="setSort('distance')">1. 거리순 정렬</button>
+    <button onclick="openManualModal()">2. 건별등록</button>
+    <button onclick="openModal('centerRegisterModal')">3. 센터등록</button>  </div>
+
+<div id="centerRegisterModal" class="modal">
+    <div class="modal-content large-modal"> 
+        <span class="close" onclick="closeModal('centerRegisterModal')">&times;</span>
+        <h2>센터 등록 (CSV 파일 업로드)</h2>
+        <p>각 유형별 CSV 파일을 선택하면, 파일 내 장애 항목(통신, 전원, 도어, 충격)이 있는 정류장의 목록을 확인합니다.</p>
+        
+        <form id="centerRegisterForm" enctype="multipart/form-data"> 
+            <div class="file-input-group">
                 <label for="independent_file">1. 독립형 첨부파일 (선택 사항):</label>
                 <input type="file" id="independent_file" name="independent_file" accept=".csv">
             </div>
