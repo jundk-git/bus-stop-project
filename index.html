@@ -777,13 +777,13 @@ function copyCenterResultsToClipboard() {
 
 
 // ----------------------------------------------------
-// --- [3/3] 통합: displayCenterResults 함수 (공백 구분자 적용) ---
+// --- [3/3] 통합: displayCenterResults 함수 (3개 공백 구분자 적용) ---
 // ----------------------------------------------------
 function displayCenterResults(results) {
     const resultList = document.getElementById('centerResultList');
     
-    // ⭐⭐ 수정: 복사할 텍스트 헤더를 '단일 공백'으로 구분
-    centerResultsTextForCopy = "종 류 정류장ID 장애발생시각\n"; 
+    // ⭐⭐ 수정: 복사할 텍스트 헤더를 '세 개의 공백'으로 구분
+    centerResultsTextForCopy = "종 류   정류장ID   장애발생시각\n"; 
     
     let tableHtml = `
         <table class="incident-table small-text">
@@ -815,14 +815,15 @@ function displayCenterResults(results) {
                     <td>${item.time}</td>
                 </tr>
             `;
-            // ⭐⭐ 수정: 복사할 텍스트 본문 추가 시 '단일 공백'을 사용하여 포맷팅
-            centerResultsTextForCopy += `${item.type} ${item.ars_id} ${item.time}\n`;
+            // ⭐⭐ 수정: 복사할 텍스트 본문 추가 시 '세 개의 공백'을 사용하여 포맷팅
+            centerResultsTextForCopy += `${item.type}   ${item.ars_id}   ${item.time}\n`;
         });
     }
     
     tableHtml += `</tbody></table>`;
     resultList.innerHTML = tableHtml;
 }
+
 </script>
 
 <div id="centerRegisterModal" class="modal">
