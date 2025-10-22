@@ -263,8 +263,9 @@ body {
         
         <div class="btn-group" style="margin-top: 25px; justify-content: flex-start;">
             <button class="btn btn-secondary btn-bottom" onclick="reloadMainList()">🔄새로고침</button>
-            <button class="btn btn-primary btn-bottom" onclick="openModal('batchModal')">1. 일괄 등록</button>
-            <button class="btn btn-primary btn-bottom" onclick="openModal('manualModal')">2. 건별 등록</button>
+            <button class="btn btn-primary btn-bottom" onclick="openModal('batchModal')">1. 일괄</button>
+            <button class="btn btn-primary btn-bottom" onclick="openModal('manualModal')">2. 건별</button>
+            <button class="btn btn-primary btn-bottom" onclick="openModal('centerRegisterModal')">3. 센터</button>
             <button onclick="openModal('centerRegisterModal')">3. 센터등록</button>
         </div>
     </div>
@@ -337,10 +338,88 @@ body {
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
+    let centerResultsTextForCopy = ''; // ⭐ 신규: 복사할 텍스트를 저장할 전역 변수
     
     // ⭐ 추가: 정렬 상태 변수
     let currentSortBy = 'distance';  // 기본 정렬 기준: 'distance'
 
+    // 처리 결과를 요청하신 테이블 형태로 표시하는 함수
+function displayCenterResults(results) {
+    const resultList = document.getElementById('centerResultList');
+    
+    // ⭐ 복사할 텍스트 헤더 설정
+    centerResultsTextForCopy = "종 류\t정류장ID\t장애발생시각\n"; 
+    
+    let tableHtml = `
+        <table class="incident-table small-text">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">종 류</th>
+                    <th style="width: 35%;">정류장ID</th>
+                    <th style="width: 40%;">장애발생시각</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    results.forEach(item => {
+        const type_tag = item.type.replace(/\[|\]/g, ''); 
+        let tag_class = '';
+        if (type_tag === '독립') tag_class = 'status-danger'; 
+        else if (type_tag === '알뜰') tag_class = 'status-warning'; 
+        else if (type_tag === '미니') tag_class = 'status-success'; 
+        
+        tableHtml += `
+            <tr>
+                <td><span class="${tag_class}" style="padding: 2px 5px; border-radius: 3px;">${item.type}</span></td>
+                <td>${item.ars_id}</td>
+                <td>${item.time}</td>
+            </tr>
+        `;
+        // ⭐ 복사할 텍스트 본문 추가 (탭(\t)으로 구분)
+        centerResultsTextForCopy += `${item.type}\t${item.ars_id}\t${item.time}\n`;
+    });
+    
+    tableHtml += `</tbody></table>`;
+    resultList.innerHTML = tableHtml;
+
+    // 만약 결과가 없으면 복사할 내용도 비움
+    if (results.length === 0) {
+        centerResultsTextForCopy = '';
+    }
+}
+
+// index.html 파일의 <script> 태그 내부, displayCenterResults 함수 다음에 추가
+
+// ----------------------------------------------------
+// --- 신규: CSV 처리 결과 복사 함수 ---
+// ----------------------------------------------------
+function copyCenterResultsToClipboard() {
+    const messageDisplay = document.getElementById('centerRegisterMessage');
+    messageDisplay.style.display = 'block';
+
+    if (!centerResultsTextForCopy) {
+        messageDisplay.className = 'modal-message warning';
+        messageDisplay.innerHTML = `⚠️ 주의: 복사할 내용이 없습니다. CSV 파일을 먼저 처리해주세요.`;
+        return;
+    }
+
+    // 전역 변수에 저장된 텍스트를 클립보드에 복사
+    navigator.clipboard.writeText(centerResultsTextForCopy)
+        .then(() => {
+            messageDisplay.className = 'modal-message status-success';
+            messageDisplay.innerHTML = `✅ 성공: ${centerResultsTextForCopy.split('\n').length - 2}건의 결과가 클립보드에 복사되었습니다.`;
+            // 잠시 후 메시지 숨기기
+            setTimeout(() => messageDisplay.style.display = 'none', 2000);
+        })
+        .catch(err => {
+            messageDisplay.className = 'modal-message error';
+            messageDisplay.innerHTML = `❌ 복사 오류: 클립보드 접근 권한이 없거나 브라우저에서 지원하지 않습니다.`;
+            console.error('클립보드 복사 실패:', err);
+        });
+}
+
+// ... (나머지 함수 유지) ...
 
     // 모달 제어 함수 (유지)
     function openModal(modalId) {
@@ -871,18 +950,15 @@ function displayCenterResults(results) {
         </form>
         
         <div id="centerResultDisplay" style="margin-top: 20px;">
-            <h3>처리 결과 목록</h3>
+            <h3>처리 결과 목록<
+                   <button class="btn btn-secondary" onclick="copyCenterResultsToClipboard()" style="float: right; font-size: 0.8em;">📋 결과 복사</button>
+            </h3>
             <div id="centerResultList" class="incident-table-container">
                 <p style="color: #6c757d;">파일 처리 후 결과가 여기에 표시됩니다.</p>
             </div>
         </div>
     </div>
 </div>
-
-<div class="header-menu">
-    <button onclick="setSort('distance')">1. 거리순 정렬</button>
-    <button onclick="openManualModal()">2. 건별등록</button>
-    <button onclick="openModal('centerRegisterModal')">3. 센터등록</button>  </div>
 
 <div id="centerRegisterModal" class="modal">
     <div class="modal-content large-modal"> 
