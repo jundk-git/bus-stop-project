@@ -333,7 +333,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://regional-discussed-unsigned-planners.trycloudflare.com'; 
+    const API_BASE_URL = 'https://maintains-aruba-distributions-correct.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
@@ -864,43 +864,6 @@ function displayCenterResults(results) {
     </div>
 </div>
 
-<div id="centerRegisterModal" class="modal">
-    <div class="modal-content large-modal"> 
-        <span class="close" onclick="closeModal('centerRegisterModal')">&times;</span>
-        <h2>센터 등록 (CSV 파일 업로드)</h2>
-        <p>각 유형별 CSV 파일을 선택하면, 파일 내 장애 항목(통신, 전원, 도어, 충격)이 있는 정류장의 목록을 확인합니다.</p>
-        
-        <form id="centerRegisterForm" enctype="multipart/form-data"> 
-            <div class="file-input-group">
-                <label for="independent_file">1. 독립형 첨부파일 (선택 사항):</label>
-                <input type="file" id="independent_file" name="independent_file" accept=".csv">
-            </div>
-            
-            <div class="file-input-group">
-                <label for="thrifty_file">2. 알뜰형 첨부파일 (선택 사항):</label>
-                <input type="file" id="thrifty_file" name="thrifty_file" accept=".csv">
-            </div>
-            
-            <div class="file-input-group">
-                <label for="mini_file">3. 미니형 첨부파일 (선택 사항):</label>
-                <input type="file" id="mini_file" name="mini_file" accept=".csv">
-            </div>
-            
-            <div id="centerRegisterMessage" class="modal-message"></div>
-            
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary" onclick="submitCenterRegister()">CSV 파일 처리</button>
-            </div>
-        </form>
-        
-        <div id="centerResultDisplay" style="margin-top: 20px;">
-            <h3>처리 결과 목록</h3>
-            <div id="centerResultList" class="incident-table-container">
-                <p style="color: #6c757d;">파일 처리 후 결과가 여기에 표시됩니다.</p>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 </body>
