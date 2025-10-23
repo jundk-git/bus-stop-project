@@ -283,6 +283,27 @@ body {
     </div>
 
    
+<div class="modal" id="batchModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('batchModal')">&times;</span>
+            <h2>1. 일괄 등록</h2>
+            <p>
+                **종류, 정류장ID, 장애발생시각**을 **한 줄에 하나씩** 입력합니다. <br>
+                공백이 여러 개이거나 탭이 섞여 있어도 상관없이 안정적으로 처리됩니다.
+            </p>
+            <div class="input-group">
+                <label for="batchInputArea">장애 목록 입력 (예: `[독립] 06-117 10-21 16:44`)</label>
+                <textarea id="batchInputArea" rows="10" placeholder="[독립]	06-117	10-21 16:44&#10;[독립]	10-219	10-20 16:01&#10;..."></textarea>
+            </div>
+            
+            <div id="batchRegisterMessage" class="modal-message" style="display: none;"></div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="batchRegister()">일괄 등록 실행</button>
+            </div>
+        </div>
+    </div>
+
 <div id="detailModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('detailModal')">&times;</span>
@@ -823,6 +844,72 @@ function displayCenterResults(results) {
     tableHtml += `</tbody></table>`;
     resultList.innerHTML = tableHtml;
 }
+
+// index.html의 <script> 태그 내부, 기존 함수들 다음에 다음 코드를 추가합니다.
+
+    // --- 🌟 1. 일괄 등록 기능 🌟 ---
+    function batchRegister() {
+        const batchInputArea = document.getElementById('batchInputArea');
+        const messageDisplay = document.getElementById('batchRegisterMessage');
+        const incidentData = batchInputArea.value.trim();
+
+        messageDisplay.style.display = 'none';
+        messageDisplay.className = 'modal-message';
+        messageDisplay.innerHTML = '처리 중...';
+        messageDisplay.style.display = 'block';
+
+        if (!incidentData) {
+            messageDisplay.innerHTML = '<span class="error">❌ 오류:</span> 등록할 데이터가 없습니다.';
+            messageDisplay.style.display = 'block';
+            return;
+        }
+        
+        // 서버로 데이터 전송
+        fetch(API_BASE_URL + '/batch_register', { // ⭐ 새로 추가한 Python API 호출
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ incident_data: incidentData })
+        })
+        .then(response => {
+            if (!response.ok) {
+                // 서버 오류 발생 시 (예: HTTP 500)
+                return response.json().then(err => { throw new Error(err.error || `HTTP ${response.status} (${response.statusText})`); });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                // 서버에서 500이 아닌 JSON 오류 응답이 온 경우
+                messageDisplay.innerHTML = `<span class="error">❌ 서버 오류:</span> ${data.error}<br>상세: ${data.details}`;
+                messageDisplay.className = 'modal-message status-error';
+            } else {
+                // 성공/실패 카운트를 포함한 메시지 출력
+                let html = `<span class="status-success">✅ ${data.message}</span>`;
+                if (data.fail_count > 0 && data.errors && data.errors.length > 0) {
+                    // 실패 항목이 있을 경우 에러 목록을 상세 출력
+                    html += `<br><details><summary style="color: #ffc107; cursor: pointer;">👉 실패 항목 ${data.fail_count}건 보기</summary>`;
+                    html += '<ul>' + data.errors.map(err => `<li>${err}</li>`).join('') + '</ul>';
+                    html += '</details>';
+                    messageDisplay.className = 'modal-message status-warning'; // 경고 스타일 적용
+                } else {
+                    messageDisplay.className = 'modal-message status-success'; // 성공 스타일 적용
+                }
+                messageDisplay.innerHTML = html;
+                
+                // 등록 완료 후 메인 목록 새로고침
+                reloadMainList(); 
+                // 성공적으로 등록 후 입력창 비우기 (선택 사항)
+                // batchInputArea.value = ''; 
+            }
+        })
+        .catch(error => {
+            // 통신 자체의 실패 또는 서버 오류 처리
+            messageDisplay.innerHTML = `<span class="error">❌ 통신 오류:</span> 서버 연결 또는 라우팅 오류가 의심됩니다. (진단: ${error.message})`;
+            messageDisplay.style.display = 'block';
+            messageDisplay.className = 'modal-message status-error';
+            console.error("Batch register error:", error);
+        });
+    }
 
 </script>
 
