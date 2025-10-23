@@ -1001,39 +1001,48 @@ function displayCenterResults(results) {
 
 // 1. 메인 함수: 정류장 클릭 시 호출됩니다.
 function getIncidentDetails(arsId) {
-    // 💡 첫 호출 시 바로 로딩 표시
     showModal(`<h3>${arsId}</h3> 상세 정보 로드 중...`);
 
     fetch(`/incident_details/${arsId}`)
         .then(response => {
             if (!response.ok) {
-                return response.json().then(err => { 
-                    throw new Error(err.details || `HTTP ${response.status} - 알 수 없는 서버 오류`);
+                // 💡 서버가 500을 반환했을 때, 응답 본문이 JSON이 아닐 경우를 처리합니다.
+                return response.text().then(text => { 
+                    try {
+                        // 서버가 JSON을 반환했는지 시도해 봅니다.
+                        const err = JSON.parse(text);
+                        // JSON을 반환했다면, err.details를 사용합니다.
+                        throw new Error(err.details || `HTTP ${response.status} - 서버 오류: 상세 정보 없음`);
+                    } catch (e) {
+                        // JSON 파싱 실패 (서버에서 일반 HTML이나 빈 응답이 왔을 경우)
+                        console.error("Non-JSON Server Error Response:", text);
+                        
+                        // 서버의 응답 중 첫 300자를 가져와 HTML 태그를 제거하고 스니펫으로 만듭니다.
+                        const errorSnippet = text.substring(0, 300).replace(/<[^>]*>?/gm, ' ').trim();
+                        
+                        // 서버 콘솔을 확인하도록 안내하고, 오류 스니펫을 포함하여 던집니다.
+                        throw new Error(`HTTP ${response.status} - 서버 내부 오류. Flask 서버 콘솔을 확인하세요. 응답 스니펫: ${errorSnippet}`);
+                    }
                 });
             }
             return response.json();
         })
         .then(data => {
+            closeModal(); 
+            
             const facilities = data.facilities;
             const incidents = data.incidents;
             
-            // 🚨 이전 모달이 열려 있다면 닫아줍니다. (이전 호출에서 이미 닫았어야 하지만, 혹시 모를 상황 대비)
-            closeModal(); 
-            
             if (facilities && facilities.length > 1) {
-                // 🟢 2개 이상인 경우: 모달 팝업으로 선택창 표시
                 showFacilitySelectionModal(arsId, facilities, incidents);
             } else if (facilities && facilities.length === 1) {
-                // 1개인 경우: 바로 상세 정보를 보여줍니다.
                 const selectedFacility = facilities[0];
                 displayIncidentDetails(arsId, selectedFacility, incidents);
             } else {
-                // 0개인 경우: 시설물 정보 없음 처리
                 displayIncidentDetails(arsId, null, incidents);
             }
         })
         .catch(error => {
-            // 오류가 발생하면 모달을 닫지 않고 오류 메시지를 표시합니다.
             showModal(`❌ 상세 정보 로드 중 오류 발생: ${error.message}`);
         });
 }
