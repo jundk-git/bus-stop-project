@@ -8,8 +8,7 @@
         /* 기본 스타일 및 컨테이너 */
 
 
-/* index.html 파일의 <style> 태그 내부 */
-/* 🟢 시설물 선택 모달 버튼 스타일 추가 */
+/* 🟢 시설물 선택 모달 버튼 스타일 */
 .facility-select-list {
     display: flex;
     flex-direction: column;
@@ -1000,8 +999,9 @@ function displayCenterResults(results) {
 
 // index.html 파일의 <script> 태그 내부
 
-// 1. 메인 함수: 정류장 클릭 시 호출됩니다. (예: onclick="getIncidentDetails('24-223')")
+// 1. 메인 함수: 정류장 클릭 시 호출됩니다.
 function getIncidentDetails(arsId) {
+    // 💡 첫 호출 시 바로 로딩 표시
     showModal(`<h3>${arsId}</h3> 상세 정보 로드 중...`);
 
     fetch(`/incident_details/${arsId}`)
@@ -1015,7 +1015,10 @@ function getIncidentDetails(arsId) {
         })
         .then(data => {
             const facilities = data.facilities;
-            const incidents = data.incidents; // 서버에서 함께 로드된 장애 정보
+            const incidents = data.incidents;
+            
+            // 🚨 이전 모달이 열려 있다면 닫아줍니다. (이전 호출에서 이미 닫았어야 하지만, 혹시 모를 상황 대비)
+            closeModal(); 
             
             if (facilities && facilities.length > 1) {
                 // 🟢 2개 이상인 경우: 모달 팝업으로 선택창 표시
@@ -1030,6 +1033,7 @@ function getIncidentDetails(arsId) {
             }
         })
         .catch(error => {
+            // 오류가 발생하면 모달을 닫지 않고 오류 메시지를 표시합니다.
             showModal(`❌ 상세 정보 로드 중 오류 발생: ${error.message}`);
         });
 }
@@ -1044,33 +1048,48 @@ function showFacilitySelectionModal(arsId, facilities, incidents) {
 
     facilities.forEach((facility, index) => {
         const btnText = `[${facility.BIT제품종류}] ${facility.시설물명} (Key: ${facility.시설물키})`;
+        // data-facility-index를 사용하여 선택된 항목을 식별합니다.
         modalContent += `
-            <button class="btn btn-select" 
-                    data-facility-index="${index}">
+            <button class="btn btn-select" data-facility-index="${index}">
                 ${btnText}
             </button>
         `;
     });
-
     modalContent += `</div>`;
-
+    
+    // 모달을 표시합니다.
     showModal(modalContent);
     
-    // 버튼 클릭 이벤트 리스너 추가: 선택 시 상세 정보 표시 함수 호출
-    document.querySelectorAll('#incidentModal .btn-select').forEach(button => {
-        button.onclick = function() {
-            closeModal();
-            const index = this.getAttribute('data-facility-index');
-            const selectedFacility = facilities[index];
+    // 💡 이벤트 리스너를 부착합니다. 두 번째 클릭 오류를 방지하기 위해
+    // 이벤트 위임을 사용하거나, 현재 DOM에 있는 버튼에만 리스너를 정확히 부착해야 합니다.
+    // 여기서는 `setTimeout`을 사용하여 DOM 렌더링 후 리스너 부착이 확실히 되도록 합니다.
+    setTimeout(() => {
+        // 기존 리스너 충돌을 방지하기 위해 새로운 이벤트 리스너를 사용합니다.
+        document.querySelectorAll('#incidentModal .btn-select').forEach(button => {
+            // 기존 onclick 이벤트 핸들러가 남아있을 수 있으므로, 해당 핸들러를 제거합니다.
+            // 버튼의 기존 이벤트를 초기화하는 명시적 코드가 없으므로,
+            // 안전하게 addEventListener를 사용하고, 해당 버튼에 고유한 클래스를 사용하여 처리합니다.
             
-            displayIncidentDetails(arsId, selectedFacility, incidents);
-        };
-    });
+            // 🚨 중요한 부분: 한 번만 리스너를 추가하도록 처리
+            if (!button.getAttribute('data-listener-attached')) {
+                button.addEventListener('click', function() {
+                    closeModal();
+                    const index = this.getAttribute('data-facility-index');
+                    const selectedFacility = facilities[index];
+                    
+                    displayIncidentDetails(arsId, selectedFacility, incidents);
+                });
+                button.setAttribute('data-listener-attached', 'true'); // 리스너가 부착되었음을 표시
+            }
+        });
+    }, 0); // 0ms setTimeout으로 DOM 업데이트 후 실행을 보장
+
 }
 
-// 3. 신규 함수: 상세 정보 표시 로직
+// 3. 상세 정보 표시 로직
 function displayIncidentDetails(arsId, facility, incidents) {
-    // 시설물 정보 표시
+    // ... (이전과 동일한 로직, facilityInfoHtml 및 incidentListHtml 생성) ...
+
     const facilityInfoHtml = facility ? `
         <p>
             선택된 시설물: <span class="asset-key-highlight">${facility.시설물명}</span> 
@@ -1078,7 +1097,6 @@ function displayIncidentDetails(arsId, facility, incidents) {
         </p>
     ` : `<p class="error-message">🚨 경고: 이 정류장의 시설물 정보(seoul_facility_info)를 찾을 수 없습니다.</p>`;
 
-    // 장애 목록 테이블 생성
     let incidentListHtml = '';
     if (incidents && incidents.length > 0) {
         incidentListHtml = `
@@ -1119,8 +1137,6 @@ function displayIncidentDetails(arsId, facility, incidents) {
     
     showModal(modalContent);
 }
-// 🚨 주의: showModal(), closeModal(), deleteIncident() 함수는 기존에 정의되어 있어야 합니다.
-
 
 </body>
 </html>
