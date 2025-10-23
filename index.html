@@ -848,68 +848,80 @@ function displayCenterResults(results) {
 // index.html의 <script> 태그 내부, 기존 함수들 다음에 다음 코드를 추가합니다.
 
     // --- 🌟 1. 일괄 등록 기능 🌟 ---
-    function batchRegister() {
-        const batchInputArea = document.getElementById('batchInputArea');
-        const messageDisplay = document.getElementById('batchRegisterMessage');
-        const incidentData = batchInputArea.value.trim();
+   function batchRegister() {
+    const batchInputArea = document.getElementById('batchInputArea');
+    const messageDisplay = document.getElementById('batchRegisterMessage');
+    const incidentData = batchInputArea.value.trim();
 
-        messageDisplay.style.display = 'none';
-        messageDisplay.className = 'modal-message';
-        messageDisplay.innerHTML = '처리 중...';
+    messageDisplay.style.display = 'none';
+    messageDisplay.className = 'modal-message';
+    messageDisplay.innerHTML = '처리 중...';
+    messageDisplay.style.display = 'block';
+
+    if (!incidentData) {
+        messageDisplay.innerHTML = '<span class="error">❌ 오류:</span> 등록할 데이터가 없습니다.';
         messageDisplay.style.display = 'block';
-
-        if (!incidentData) {
-            messageDisplay.innerHTML = '<span class="error">❌ 오류:</span> 등록할 데이터가 없습니다.';
-            messageDisplay.style.display = 'block';
-            return;
-        }
-        
-        // 서버로 데이터 전송
-        fetch(API_BASE_URL + '/batch_register', { // ⭐ 새로 추가한 Python API 호출
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ incident_data: incidentData })
-        })
-        .then(response => {
-            if (!response.ok) {
-                // 서버 오류 발생 시 (예: HTTP 500)
-                return response.json().then(err => { throw new Error(err.error || `HTTP ${response.status} (${response.statusText})`); });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.error) {
-                // 서버에서 500이 아닌 JSON 오류 응답이 온 경우
-                messageDisplay.innerHTML = `<span class="error">❌ 서버 오류:</span> ${data.error}<br>상세: ${data.details}`;
-                messageDisplay.className = 'modal-message status-error';
-            } else {
-                // 성공/실패 카운트를 포함한 메시지 출력
-                let html = `<span class="status-success">✅ ${data.message}</span>`;
-                if (data.fail_count > 0 && data.errors && data.errors.length > 0) {
-                    // 실패 항목이 있을 경우 에러 목록을 상세 출력
-                    html += `<br><details><summary style="color: #ffc107; cursor: pointer;">👉 실패 항목 ${data.fail_count}건 보기</summary>`;
-                    html += '<ul>' + data.errors.map(err => `<li>${err}</li>`).join('') + '</ul>';
-                    html += '</details>';
-                    messageDisplay.className = 'modal-message status-warning'; // 경고 스타일 적용
-                } else {
-                    messageDisplay.className = 'modal-message status-success'; // 성공 스타일 적용
-                }
-                messageDisplay.innerHTML = html;
-                
-                // 등록 완료 후 메인 목록 새로고침
-                reloadMainList(); 
-                // 성공적으로 등록 후 입력창 비우기 (선택 사항)
-                // batchInputArea.value = ''; 
-            }
-        })
-        .catch(error => {
-            // 통신 자체의 실패 또는 서버 오류 처리
-            messageDisplay.innerHTML = `<span class="error">❌ 통신 오류:</span> 서버 연결 또는 라우팅 오류가 의심됩니다. (진단: ${error.message})`;
-            messageDisplay.style.display = 'block';
-            messageDisplay.className = 'modal-message status-error';
-            console.error("Batch register error:", error);
-        });
+        return;
     }
+    
+    // 서버로 데이터 전송
+    fetch(API_BASE_URL + '/batch_register', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ incident_data: incidentData })
+    })
+    .then(response => {
+        // HTTP 상태 코드가 400 이상일 때 처리
+        if (!response.ok) {
+            // 서버가 JSON 오류 응답을 보냈다면 JSON으로 처리
+            return response.json().catch(() => {
+                // 서버가 JSON이 아닌 일반 텍스트나 HTML 오류 페이지를 보냈다면, 통신 상태만 던짐
+                throw new Error(`HTTP ${response.status} (${response.statusText || '서버 응답 없음'})`);
+            })
+            .then(err => {
+                // 서버가 JSON 오류 응답을 보낸 경우 (err.error, err.details 포함)
+                throw err;
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        // 성공 응답 처리 (data.message, data.success_count, data.fail_count 포함)
+        let html = `<span class="status-success">✅ ${data.message}</span>`;
+        if (data.fail_count > 0 && data.errors && data.errors.length > 0) {
+            html += `<br><details><summary style="color: #ffc107; cursor: pointer;">👉 실패 항목 ${data.fail_count}건 보기</summary>`;
+            html += '<ul>' + data.errors.map(err => `<li>${err}</li>`).join('') + '</ul>';
+            html += '</details>';
+            messageDisplay.className = 'modal-message status-warning'; 
+        } else {
+            messageDisplay.className = 'modal-message status-success'; 
+        }
+        messageDisplay.innerHTML = html;
+        
+        reloadMainList(); 
+        // batchInputArea.value = ''; 
+    })
+    .catch(error => {
+        // 최종 오류 처리 (통신 오류 또는 서버에서 보낸 JSON 오류)
+        let errorMsg = '통신 오류';
+        let detailMsg = '';
+        
+        if (error.error) {
+            // 서버에서 보낸 JSON 오류 객체인 경우 (HTTP 500)
+            errorMsg = error.error || '서버 내부 오류';
+            detailMsg = error.details || '상세 정보 없음';
+        } else {
+            // 통신 자체의 오류 (네트워크, 라우팅 문제)
+            errorMsg = '통신 오류';
+            detailMsg = error.message;
+        }
+
+        messageDisplay.innerHTML = `<span class="error">❌ ${errorMsg}:</span> ${detailMsg}`;
+        messageDisplay.style.display = 'block';
+        messageDisplay.className = 'modal-message status-error';
+        console.error("Batch register error:", error);
+    });
+}
 
 </script>
 
