@@ -7,43 +7,6 @@
     <style>
         /* 기본 스타일 및 컨테이너 */
 
-
-/* 🟢 시설물 선택 모달 버튼 스타일 */
-.facility-select-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.btn-select {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 12px 15px;
-    text-align: left;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 15px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.3s;
-    word-break: break-word;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn-select:hover {
-    background-color: #0056b3;
-}
-
-.modal-title {
-    color: #007bff;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    margin-top: 0;
-}
-
 .asset-key-highlight { 
     color: #004085; /* 진한 파란색 글씨 */ 
     font-weight: 900; /* 매우 두껍게 강조 */
@@ -420,6 +383,7 @@ body {
 
     // 기준 ID 설정 및 목록 새로고침
     function setStandardId(stopId) {
+        const arsIdOnly = stopId.split(' ')[0];
         currentStandardId = stopId;
         reloadMainList();
     }
@@ -548,6 +512,7 @@ body {
     
     // 상세 팝업 열기 (GET)
     function showDetailModal(stopId) {
+        const arsIdOnly = stopId.split(' ')[0];
         activeStopId = stopId;
         openModal('detailModal');
         const actionMessage = document.getElementById('actionMessage');
@@ -562,7 +527,7 @@ body {
         btnCreate.style.display = 'none';
 
 
-        fetch(API_BASE_URL + `/incident_details/${stopId}`)
+        fetch(API_BASE_URL + `/incident_details/${arsIdOnly}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status} (${response.statusText})`);
@@ -997,155 +962,7 @@ function displayCenterResults(results) {
     </div>
 </div>
 
-// index.html 파일의 <script> 태그 내부
 
-// 1. 메인 함수: 정류장 클릭 시 호출됩니다.
-function getIncidentDetails(arsId) {
-    showModal(`<h3>${arsId}</h3> 상세 정보 로드 중...`);
-
-    fetch(`/incident_details/${arsId}`)
-        .then(response => {
-            if (!response.ok) {
-                // 💡 서버가 500을 반환했을 때, 응답 본문이 JSON이 아닐 경우를 처리합니다.
-                return response.text().then(text => { 
-                    try {
-                        // 서버가 JSON을 반환했는지 시도해 봅니다.
-                        const err = JSON.parse(text);
-                        // JSON을 반환했다면, err.details를 사용합니다.
-                        throw new Error(err.details || `HTTP ${response.status} - 서버 오류: 상세 정보 없음`);
-                    } catch (e) {
-                        // JSON 파싱 실패 (서버에서 일반 HTML이나 빈 응답이 왔을 경우)
-                        console.error("Non-JSON Server Error Response:", text);
-                        
-                        // 서버의 응답 중 첫 300자를 가져와 HTML 태그를 제거하고 스니펫으로 만듭니다.
-                        const errorSnippet = text.substring(0, 300).replace(/<[^>]*>?/gm, ' ').trim();
-                        
-                        // 서버 콘솔을 확인하도록 안내하고, 오류 스니펫을 포함하여 던집니다.
-                        throw new Error(`HTTP ${response.status} - 서버 내부 오류. Flask 서버 콘솔을 확인하세요. 응답 스니펫: ${errorSnippet}`);
-                    }
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            closeModal(); 
-            
-            const facilities = data.facilities;
-            const incidents = data.incidents;
-            
-            if (facilities && facilities.length > 1) {
-                showFacilitySelectionModal(arsId, facilities, incidents);
-            } else if (facilities && facilities.length === 1) {
-                const selectedFacility = facilities[0];
-                displayIncidentDetails(arsId, selectedFacility, incidents);
-            } else {
-                displayIncidentDetails(arsId, null, incidents);
-            }
-        })
-        .catch(error => {
-            showModal(`❌ 상세 정보 로드 중 오류 발생: ${error.message}`);
-        });
-}
-
-// 2. 신규 함수: 시설물 선택 모달 표시
-function showFacilitySelectionModal(arsId, facilities, incidents) {
-    let modalContent = `
-        <h3 class="modal-title">정류장 ${arsId} - 시설물 선택</h3>
-        <p>이 정류장에는 ${facilities.length}개의 시설물 정보가 등록되어 있습니다. 상세 정보를 확인할 항목을 선택해주세요.</p>
-        <div class="facility-select-list">
-    `;
-
-    facilities.forEach((facility, index) => {
-        const btnText = `[${facility.BIT제품종류}] ${facility.시설물명} (Key: ${facility.시설물키})`;
-        // data-facility-index를 사용하여 선택된 항목을 식별합니다.
-        modalContent += `
-            <button class="btn btn-select" data-facility-index="${index}">
-                ${btnText}
-            </button>
-        `;
-    });
-    modalContent += `</div>`;
-    
-    // 모달을 표시합니다.
-    showModal(modalContent);
-    
-    // 💡 이벤트 리스너를 부착합니다. 두 번째 클릭 오류를 방지하기 위해
-    // 이벤트 위임을 사용하거나, 현재 DOM에 있는 버튼에만 리스너를 정확히 부착해야 합니다.
-    // 여기서는 `setTimeout`을 사용하여 DOM 렌더링 후 리스너 부착이 확실히 되도록 합니다.
-    setTimeout(() => {
-        // 기존 리스너 충돌을 방지하기 위해 새로운 이벤트 리스너를 사용합니다.
-        document.querySelectorAll('#incidentModal .btn-select').forEach(button => {
-            // 기존 onclick 이벤트 핸들러가 남아있을 수 있으므로, 해당 핸들러를 제거합니다.
-            // 버튼의 기존 이벤트를 초기화하는 명시적 코드가 없으므로,
-            // 안전하게 addEventListener를 사용하고, 해당 버튼에 고유한 클래스를 사용하여 처리합니다.
-            
-            // 🚨 중요한 부분: 한 번만 리스너를 추가하도록 처리
-            if (!button.getAttribute('data-listener-attached')) {
-                button.addEventListener('click', function() {
-                    closeModal();
-                    const index = this.getAttribute('data-facility-index');
-                    const selectedFacility = facilities[index];
-                    
-                    displayIncidentDetails(arsId, selectedFacility, incidents);
-                });
-                button.setAttribute('data-listener-attached', 'true'); // 리스너가 부착되었음을 표시
-            }
-        });
-    }, 0); // 0ms setTimeout으로 DOM 업데이트 후 실행을 보장
-
-}
-
-// 3. 상세 정보 표시 로직
-function displayIncidentDetails(arsId, facility, incidents) {
-    // ... (이전과 동일한 로직, facilityInfoHtml 및 incidentListHtml 생성) ...
-
-    const facilityInfoHtml = facility ? `
-        <p>
-            선택된 시설물: <span class="asset-key-highlight">${facility.시설물명}</span> 
-            <br>유형: ${facility.BIT제품종류} / 시설물키: ${facility.시설물키}
-        </p>
-    ` : `<p class="error-message">🚨 경고: 이 정류장의 시설물 정보(seoul_facility_info)를 찾을 수 없습니다.</p>`;
-
-    let incidentListHtml = '';
-    if (incidents && incidents.length > 0) {
-        incidentListHtml = `
-            <h4>활성 장애 (${incidents.length}건)</h4>
-            <table class="incident-table">
-                <thead>
-                    <tr>
-                        <th>유형</th>
-                        <th>발생시각</th>
-                        <th>처리</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        incidents.forEach(inc => {
-            incidentListHtml += `
-                <tr>
-                    <td>[${inc.STOP_TYPE}]</td> 
-                    <td>${inc.START_TIME}</td>
-                    <td><button class="btn btn-sm btn-danger" onclick="deleteIncident('${inc.ARS_ID}', '${inc.START_TIME}')">삭제</button></td>
-                </tr>
-            `;
-        });
-        incidentListHtml += `</tbody></table>`;
-    } else {
-        incidentListHtml = `<p>✅ 현재 등록된 활성 장애가 없습니다.</p>`;
-    }
-
-    const modalContent = `
-        <h3>정류장 상세 정보: ${arsId}</h3>
-        ${facilityInfoHtml}
-        <hr>
-        ${incidentListHtml}
-        <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal()">닫기</button>
-        </div>
-    `;
-    
-    showModal(modalContent);
-}
 
 </body>
 </html>
