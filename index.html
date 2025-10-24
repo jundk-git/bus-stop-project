@@ -385,6 +385,8 @@ body {
     function setStandardId(stopId) {
         const arsIdOnly = stopId.split(' ')[0];
         currentStandardId = stopId;
+        // ✅ 디버깅 추가: 브라우저 콘솔에 전송할 ARS ID 출력
+        console.log(`DEBUG_CLIENT: Setting Standard ARS ID: ${arsIdOnly}`);
         reloadMainList();
     }
     
@@ -518,6 +520,7 @@ body {
         const actionMessage = document.getElementById('actionMessage');
         actionMessage.style.display = 'none';
 
+
         const btnUpdate = document.getElementById('btnDetailUpdate');
         const btnDelete = document.getElementById('btnDetailDelete');
         const btnCreate = document.getElementById('btnDetailCreate');
@@ -526,6 +529,8 @@ body {
         btnDelete.style.display = 'none';
         btnCreate.style.display = 'none';
 
+        // ✅ 디버깅 추가: 브라우저 콘솔에 서버로 보낼 ID를 출력합니다.
+        console.log(`DEBUG_CLIENT: Fetching details for ARS ID: ${arsIdOnly}`);
 
         fetch(API_BASE_URL + `/incident_details/${arsIdOnly}`)
             .then(response => {
