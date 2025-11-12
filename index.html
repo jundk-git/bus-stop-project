@@ -286,32 +286,30 @@ body {
 
    
 <div class="modal" id="batchModal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('batchModal')">&times;</span>
-            <h2>1. 일괄 등록</h2>
-            <p>
-                **종류, 정류장ID, 장애발생시각**을 **한 줄에 하나씩** 입력합니다. <br>
-                공백이 여러 개이거나 탭이 섞여 있어도 상관없이 안정적으로 처리됩니다.
-            </p>
-            <div class="input-group">
-                <label for="batchInputArea">장애 목록 입력 (예: `[독립] 06-117 10-21 16:44`)</label>
-                <textarea id="batchInputArea" rows="10" placeholder="[독립]	06-117	10-21 16:44&#10;[독립]	10-219	10-20 16:01&#10;..."></textarea>
-            </div>
-            
-            <div id="batchRegisterMessage" class="modal-message" style="display: none;"></div>
-            
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="batchRegister()">일괄 등록 실행</button>
-            </div>
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('batchModal')">&times;</span>
+        <h2>1. 일괄 등록</h2>
+        <p>
+            **종류, 정류장ID, 장애발생시각, 사유**를 **한 줄에 하나씩** 입력합니다. <br> 공백이 여러 개이거나 탭이 섞여 있어도 상관없이 안정적으로 처리됩니다.
+        </p>
+        <div class="input-group">
+            <label for="batchInputArea">장애 목록 입력 (예: `독 06-117 10-21 16:44 단전`)</label> <textarea id="batchInputArea" rows="10" placeholder="독	09-106	11-12 13:25	&#10;독	10-006	11-10 12:23	단전&#10;알	12-361	11-12 15:39	"></textarea> </div>
+        
+        <div id="batchRegisterMessage" class="modal-message" style="display: none;"></div>
+        
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="batchRegister()">일괄 등록 실행</button>
         </div>
     </div>
+</div>
+
 
 <div id="detailModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('detailModal')">&times;</span>
         <h3>상세 정보 및 진행 현황</h3>                                             
         <div class="status-info"> 
-            <p><strong id="detailStopId">N/A</strong> / <strong id="detailStopName">N/A</strong> / <strong id="detailTime">N/A</strong> 
+            <p><strong id="detailStopId">N/A</strong> / <strong id="detailStopName">N/A</strong> / <strong id="detailTime">N/A</strong> <strong id="detailReason">N/A</strong>
         </div>    
         <h3 style="margin-top: 15px;">시설물 세부 정보</h3>
              <div class="status-info" style="font-size: 0.9em; background-color: #f0f8ff; border: 1px solid #cceeff;">
@@ -356,7 +354,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://lightbox-ram-george-puzzle.trycloudflare.com'; 
+    const API_BASE_URL = 'https://web-spoken-phoenix-walk.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
@@ -439,7 +437,7 @@ body {
                                 <th style="width: 15%; cursor: pointer;" onclick="toggleSort('id')">정류장번호 ↓</th>
                                 <th style="width: 15%; cursor: pointer;" onclick="toggleSort('time')">발생시간 ↓</th>  
                                 <th style="width: 15%; cursor: pointer;" onclick="toggleSort('distance')">거리↓</th>
-                                <th style="width: 55%;">진행사항</th> 
+                                <th style="width: 10%;">사유</th> <th style="width: 55%;">진행사항</th> 
                             </tr>
                         </thead>
                         <tbody>
@@ -462,7 +460,7 @@ body {
                                 <td><span class="incident-text">${item.id}</span></td> 
                                 <td><span class="incident-text">${item.time}</span></td>  
                                 <td><span class="incident-text">${distanceValue}</span></td> 
-                                <td>${actionDisplay}</td> </tr>
+                                <td>${item.reason || ''}<td>${actionDisplay}</td> </tr>
                         `;
                     });
                 }
@@ -572,7 +570,8 @@ body {
                
                 if (activeData) {
                     document.getElementById('detailTime').textContent = activeData.time;
-                    document.getElementById('actionText').value = activeData.action || '';
+                    document.getElementById('actionText').value = activeData.action;
+                    document.getElementById('detailReason').textContent = activeData.reason || '없음'; // 🌟 사유 필드 추가 || '';
                     
                     btnUpdate.style.display = 'block';
                     btnDelete.style.display = 'block';
@@ -580,7 +579,7 @@ body {
                 } else {
                     document.getElementById('detailTime').textContent = 'N/A';
                     document.getElementById('actionText').value = ''; 
-                    
+                    document.getElementById('detailReason').textContent = '없음 (비활성)'; // 🌟 사유 필드 추가 (비활성 상태)
                     btnCreate.style.display = 'block';
                 }
 
