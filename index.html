@@ -492,7 +492,7 @@ body {
             return;
         }
 
-        fetch(API_BASE_URL + '/process_sample', {
+        fetch(API_BASE_URL + '/batch_register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sample_text: sampleText }) 
