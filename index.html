@@ -315,7 +315,6 @@ body {
     </div>
 </div>
 
-
 <div id="detailModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('detailModal')">&times;</span>
@@ -947,7 +946,9 @@ function displayCenterResults(results) {
 async function submitBatchTextRegister() {
     // 1. 텍스트 입력 필드의 ID를 사용해 값을 가져옵니다.
     const incidentDataInput = document.getElementById('batchTextInput');
-    const incidentData = incidentDataInput.value.trim(); // 공백 제거 후 값 저장
+
+    // ⭐ [핵심 수정] ID가 없을 경우 대비 및 값 가져오기 ⭐
+    const incidentData = incidentDataInput ? incidentDataInput.value.trim() : '';
 
     const messageDisplay = document.getElementById('batchTextRegisterMessage');
     messageDisplay.style.display = 'none';
@@ -956,7 +957,7 @@ async function submitBatchTextRegister() {
     
     if (!incidentData) {
         messageDisplay.className = 'modal-message error';
-        messageDisplay.innerHTML = `오류: 처리할 텍스트 데이터가 없습니다.`;
+        messageDisplay.innerHTML = `❌ 오류: 처리할 텍스트 데이터가 없습니다.`;
         messageDisplay.style.display = 'block';
         return;
     }
