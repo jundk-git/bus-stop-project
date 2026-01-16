@@ -264,7 +264,7 @@ body {
         </p>
         
         <div class="btn-group" style="margin-top: 25px; justify-content: flex-start;">
-            <button class="btn btn-secondary btn-bottom" onclick="reloadMainList()">🔄새로고침</button>
+            <button class="btn-refresh" onclick="refreshWithCurrentLocation()">새로고침</button>
             <button class="btn btn-primary btn-bottom" onclick="openModal('batchModal')">1. 일괄</button>
             <button class="btn btn-primary btn-bottom" onclick="openModal('manualModal')">2. 건별</button>
             <button class="btn btn-primary btn-bottom" onclick="openModal('centerRegisterModal')">3. 센터</button>
@@ -356,7 +356,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://shaft-scientist-annie-payday.trycloudflare.com'; 
+    const API_BASE_URL = 'https://handbook-perth-surname-dsc.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
@@ -402,7 +402,9 @@ body {
         }
         reloadMainList();
     }
-
+   
+     
+    
 
     // 활성 장애 목록을 새로 로드하는 함수 (GET 요청)
     function reloadMainList() {
@@ -803,6 +805,47 @@ function copyCenterResultsToClipboard() {
             messageDisplay.innerHTML = `❌ 복사 오류: 클립보드 접근 권한이 없거나 브라우저에서 지원하지 않습니다.`;
             console.error('클립보드 복사 실패:', err);
         });
+}
+
+
+function refreshWithCurrentLocation() {
+    // 1. 브라우저가 GPS를 지원하는지 확인
+    if (!navigator.geolocation) {
+        alert("이 브라우저에서는 위치 정보를 사용할 수 없습니다.");
+        loadActiveIncidents(); // GPS 안되면 그냥 기존대로 새로고침
+        return;
+    }
+
+    // 2. 현재 위치 좌표 가져오기
+    navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        // 3. Flask 서버에 내 위치를 보내서 가장 가까운 ARS_ID를 받아옴
+        fetch(`/get_nearest_stop?lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.nearest_id) {
+                    // 서버가 찾은 가장 가까운 정류장 ID를 입력창에 넣음
+                    const inputEl = document.getElementById('standardIdInput');
+                    if (inputEl) inputEl.value = data.nearest_id;
+                    
+                    // 기준 ID를 업데이트하고 목록을 '거리순'으로 불러옴
+                    currentStandardId = data.nearest_id;
+                    loadActiveIncidents(data.nearest_id, 'distance');
+                } else {
+                    loadActiveIncidents();
+                }
+            })
+            .catch(err => {
+                console.error("위치 서버 통신 에러:", err);
+                loadActiveIncidents();
+            });
+    }, function(error) {
+        // GPS 권한 거부 등의 에러 처리
+        alert("위치 정보를 가져올 수 없습니다. 기본 정류장으로 조회합니다.");
+        loadActiveIncidents();
+    });
 }
 
 
