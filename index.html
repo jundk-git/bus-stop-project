@@ -152,14 +152,7 @@ body {
     overflow: hidden; 
     text-overflow: ellipsis; 
 
-        /* [완료] 항목 옅은 글씨 스타일 */
-.row-completed {
-    color: #adb5bd !important; /* 옅은 회색 */
-    opacity: 0.6;              /* 투명도 조절 */
-}
-.row-completed td, .row-completed .incident-text {
-    color: #adb5bd !important;
-}
+                           } 
 
         /* 목록의 일반 글자색 */
         .incident-text { 
@@ -468,25 +461,20 @@ body {
                     data.incidents.forEach(item => {
                         const actionDisplay = item.action ? `<span class="action-text">${item.action}</span>` : '';
                         const distanceValue = item.distance_display ? item.distance_display.replace('km', '').trim() : 'N/A';
- 
-                        // --- [수정/추가 로직 시작] ---
-                        // 1. [완료] 포함 여부에 따라 옅은 글씨 클래스 부여
-                        const isCompleted = actionDisplay.includes('[완료]');
-                        const completedClass = isCompleted ? 'row-completed' : '';
 
                         // 10번째 행마다 클래스 부여 (0부터 시작하므로 9, 19, 29...)
                         const highlightClass = (index + 1) % 10 === 0 ? 'highlight-row' : '';
 
                         listHtml += `
-                           <tr class="${highlightClass} ${completedClass}" 
+                            <tr class="" 
                                 onclick="setStandardId('${item.id}')"
                                 ondblclick="showDetailModal('${item.id}')"
                                 data-id="${item.id}">
+                                
                                 <td><span class="incident-text">${item.id}</span></td> 
                                 <td><span class="incident-text">${item.time}</span></td>  
                                 <td><span class="incident-text">${distanceValue}</span></td> 
-                                <td>${actionDisplay}</td>
-                            </tr>
+                                <td>${actionDisplay}</td> </tr>
                         `;
                     });
                 }
