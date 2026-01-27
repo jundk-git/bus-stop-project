@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -92,6 +92,21 @@ body {
             font-size: 0.8em;
             white-space: nowrap; 
         }
+
+        /* ⭐ 5개 단위로 굵은 구분선 추가 */
+        .incident-table tbody tr:nth-child(5n) td {
+            border-bottom: 2px solid #666 !important;
+        }
+
+        .incident-table th {
+            background-color: #e9ecef;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.8em;
+            border-bottom: 2px solid #333; /* 헤더 아래는 아주 진하게 */
+        }
+
+
         .incident-table th {
             background-color: #e9ecef;
             font-weight: 600;
@@ -356,7 +371,7 @@ body {
 <script>
     // 🚨🚨🚨 NGROK 문제 해결! Cloudflare Tunnel 주소로 변경되었습니다. 🚨🚨🚨
     // 터널을 껐다 켤 때마다 이 주소를 수동으로 업데이트해야 합니다.
-    const API_BASE_URL = 'https://exceptions-involvement-resource-obtaining.trycloudflare.com'; 
+    const API_BASE_URL = 'https://almost-sunday-sufficient-june.trycloudflare.com'; 
 
     let currentStandardId = '22-142'; 
     let activeStopId = null;         
